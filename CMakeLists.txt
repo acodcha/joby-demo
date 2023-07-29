@@ -10,25 +10,32 @@ set(CMAKE_BUILD_TYPE Release)
 
 # Define the CMake project and its options.
 project(
-  "joby-demo" VERSION 1.0.0 LANGUAGES CXX
+  "JobyDemo" VERSION 1.0.0 LANGUAGES CXX
   DESCRIPTION "Simple demonstration of C++ principles in the context of a vehicle fleet simulation."
   HOMEPAGE_URL "https://github.com/acodcha/joby-demo"
 )
-option(BUILD_TESTING "Build the tests." OFF)
+option(BUILD_JOBY_DEMO_TESTS "Build the JobyDemo tests." OFF)
 
-# Build the main executable.
-set(JOBY_DEMO_EXECUTABLE_NAME "joby-demo")
-add_executable(${JOBY_DEMO_EXECUTABLE_NAME} source/Main.cpp)
-target_link_libraries(${JOBY_DEMO_EXECUTABLE_NAME})
+# Download and setup the PhQ library.
+include(FetchContent)
+FetchContent_Declare(
+  PhQ
+  GIT_REPOSITORY https://github.com/acodcha/physical-quantities.git
+  GIT_TAG main
+)
+FetchContent_MakeAvailable(PhQ)
 
-# Build the tests.
-if(BUILD_TESTING)
+# Define the main executable.
+add_executable(joby-demo source/Main.cpp)
+target_link_libraries(joby-demo PUBLIC PhQ)
+
+# Configure testing.
+if(BUILD_JOBY_DEMO_TESTS)
   # Download the GoogleTest library.
-  include(FetchContent)
   FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        main
+    GIT_TAG main
   )
 
   # Do not override the parent project's compiler and linker settings on Windows.
@@ -39,11 +46,12 @@ if(BUILD_TESTING)
   include(GoogleTest)
   enable_testing()
 
+  # Define a simple test.
   add_executable(test-simple ${PROJECT_SOURCE_DIR}/test/Simple.cpp)
-  target_link_libraries(test-simple GTest::gtest_main)
+  target_link_libraries(test-simple PhQ GTest::gtest_main)
   gtest_discover_tests(test-simple)
 
-  message(STATUS "Testing was configured. Build the testing executables with \"make --jobs=16\" and run them with \"make test\"")
+  message(STATUS "The JobyDemo tests were configured. Build the test executables with \"make --jobs=16\" and run them with \"make test\"")
 else()
-  message(STATUS "Testing was not configured. Run \"cmake .. -DBUILD_TESTING=ON\" to configure testing.")
+  message(STATUS "The JobyDemo tests were not configured. Run \"cmake .. -DBUILD_JOBY_DEMO_TESTS=ON\" to configure the tests.")
 endif()
