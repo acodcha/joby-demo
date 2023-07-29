@@ -69,10 +69,6 @@ enable_testing()
 
 # Define tests.
 
-add_executable(test-simple ${PROJECT_SOURCE_DIR}/test/Simple.cpp)
-target_link_libraries(test-simple PhQ GTest::gtest_main)
-gtest_discover_tests(test-simple)
-
 add_executable(test-vehicle-model ${PROJECT_SOURCE_DIR}/test/VehicleModel.cpp)
 target_link_libraries(test-vehicle-model PhQ GTest::gtest_main)
 gtest_discover_tests(test-vehicle-model)
