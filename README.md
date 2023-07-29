@@ -4,8 +4,10 @@ Simple demonstration of C++ principles in the context of a vehicle fleet simulat
 
 The following packages are required:
 
-- **C++17 Compiler:** Any C++17 compiler will do, such as GCC or Clang. On Ubuntu, install GCC with `sudo apt install g++` or Clang with `sudo apt install clang`.
-- **CMake:** On Ubuntu, install with `sudo apt install cmake`.
+- **C++ Compiler:** Any C++ compiler with support for the C++17 standard will do, such as recent versions of GCC or Clang. On Ubuntu, install GCC with `sudo apt install g++` or Clang with `sudo apt install clang`.
+- **CMake:** Any sufficiently-recent version of CMake will do. On Ubuntu, install CMake with `sudo apt install cmake`.
+
+This project also makes use of the GoogleTest library (<https://github.com/google/googletest>) and the Physical Quantities library (<https://github.com/acodcha/physical-quantities>). These libraries are automatically downloaded, compiled, and linked to this project whenever this project is built.
 
 Clone this repository with:
 
@@ -14,7 +16,7 @@ git clone git@github.com:acodcha/joby-demo.git
 cd joby-demo
 ```
 
-Build the main executable with:
+Build this project with:
 
 ```bash
 mkdir build
@@ -23,7 +25,7 @@ cmake ..
 make --jobs=16
 ```
 
-This builds the `build/bin/joby-demo` executable.
+This builds the `build/bin/joby-demo` main executable and the testing executables.
 
 Run the main executable from the `build` directory with:
 
@@ -31,14 +33,12 @@ Run the main executable from the `build` directory with:
 bin/joby-demo
 ```
 
-You can optionally build and run tests from the `build` directory with:
+You can optionally run tests from the `build` directory with:
 
 ```bash
-cmake .. -DBUILD_TESTING=ON
-make --jobs=16
 make test
 ```
 
-This builds and runs the tests. The GoogleTest library (<https://github.com/google/googletest>) is used for testing. When testing is enabled, the GoogleTest library is downloaded, compiled, and linked to this project.
+This builds and runs the tests.
 
-This work is maintained by Alexandre Coderre-Chabot (<https://github.com/acodcha>) and licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file or <https://mit-license.org/>.
+This project is maintained by Alexandre Coderre-Chabot (<https://github.com/acodcha>) and licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file or <https://mit-license.org/>.
