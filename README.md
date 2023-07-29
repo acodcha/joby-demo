@@ -1,5 +1,7 @@
 # Joby Demonstration
 
+[![build and test](https://github.com/acodcha/joby-demo/actions/workflows/build_and_test.yaml/badge.svg?branch=main)](https://github.com/acodcha/joby-demo/actions/workflows/build_and_test.yaml)
+
 Simple demonstration of C++ principles in the context of a vehicle fleet simulation.
 
 The following packages are required:
