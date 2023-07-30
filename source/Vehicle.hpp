@@ -24,6 +24,7 @@
 
 #include <memory>
 
+#include "Statistics.hpp"
 #include "VehicleModel.hpp"
 
 namespace Demo {
@@ -61,6 +62,10 @@ public:
 
   constexpr const VehicleStatus Status() const noexcept { return status_; }
 
+  constexpr const Demo::Statistics& Statistics() const noexcept {
+    return statistics_;
+  }
+
 private:
   // Globally-unique identifier of this vehicle.
   VehicleId id_ = 0;
@@ -70,6 +75,8 @@ private:
 
   // Current status of this vehicle.
   VehicleStatus status_ = VehicleStatus::OnStandby;
+
+  Demo::Statistics statistics_;
 };
 
 }  // namespace Demo

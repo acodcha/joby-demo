@@ -22,7 +22,7 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include "../source/Vehicle.hpp"
+#include "../source/Statistics.hpp"
 
 #include <gtest/gtest.h>
 
@@ -30,33 +30,26 @@ namespace Demo {
 
 namespace {
 
-TEST(Vehicle, DefaultConstructor) {
-  const Vehicle vehicle;
-  EXPECT_EQ(vehicle.Id(), 0);
-  EXPECT_EQ(vehicle.Model(), nullptr);
-  EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
-  EXPECT_EQ(vehicle.Statistics(), Statistics());
+TEST(Statistics, DefaultConstructor) {
+  constexpr Statistics statistics;
+  EXPECT_EQ(statistics.TotalFlightCount(), 0);
+  EXPECT_EQ(statistics.TotalFlightDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(statistics.TotalFlightDistance(), PhQ::Length::Zero());
+  EXPECT_EQ(statistics.MeanFlightDurationPerFlight(), PhQ::Time::Zero());
+  EXPECT_EQ(statistics.MeanFlightDistancePerFlight(), PhQ::Length::Zero());
+  EXPECT_EQ(statistics.TotalPassengerDistance(), PhQ::Length::Zero());
+  EXPECT_EQ(statistics.TotalChargingSessionsCount(), 0);
+  EXPECT_EQ(statistics.TotalChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(
+      statistics.MeanChargingDurationPerChargingSession(), PhQ::Time::Zero());
+  EXPECT_EQ(statistics.TotalFaultCount(), 0);
 }
 
-TEST(Vehicle, MainConstructor) {
-  const VehicleId id = 456;
-
-  const std::shared_ptr<const VehicleModel> model =
-      std::make_shared<const VehicleModel>(
-          123, "Manufacturer A", "Model B", 4,
-          PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-          PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-          PhQ::Time(0.8, PhQ::Unit::Time::Hour),
-          PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
-          PhQ::TransportEnergyConsumption(
-              2.0, PhQ::Unit::Force::KilowattHourPerMile));
-
-  const Vehicle vehicle = {id, model};
-
-  EXPECT_EQ(vehicle.Id(), 456);
-  EXPECT_EQ(vehicle.Model(), model);
-  EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
-  EXPECT_EQ(vehicle.Statistics(), Statistics());
+TEST(Statistics, Operators) {
+  constexpr Statistics statistics1;
+  constexpr Statistics statistics2;
+  EXPECT_EQ(statistics1, statistics2);
+  EXPECT_FALSE(statistics1 != statistics2);
 }
 
 }  // namespace
