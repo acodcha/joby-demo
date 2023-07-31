@@ -51,7 +51,7 @@ public:
 
   // Constructs a vehicle with a given identifier and vehicle model.
   Vehicle(const VehicleId& id,
-          const std::shared_ptr<const VehicleModel>& model) noexcept
+          const std::shared_ptr<const VehicleModel> model) noexcept
     : id_(id), model_(model) {}
 
   constexpr const VehicleId& Id() const noexcept { return id_; }
