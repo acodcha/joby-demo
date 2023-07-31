@@ -42,7 +42,8 @@ public:
   // Default constructor.
   VehicleModel() noexcept = default;
 
-  // Main constructor.
+  // Constructs a vehicle model from the given parameters. Checks the given
+  // parameters for consistency and initializes all members accordingly.
   VehicleModel(
       const VehicleModelId& id,
       const std::string_view manufacturer_name_english,
@@ -53,10 +54,14 @@ public:
           transport_energy_consumption) noexcept
     : id_(id), manufacturer_name_english_(manufacturer_name_english),
       model_name_english_(model_name_english),
-      passenger_count_(passenger_count), cruise_speed_(cruise_speed),
-      battery_capacity_(battery_capacity),
-      charging_duration_(charging_duration), fault_rate_(fault_rate),
-      transport_energy_consumption_(transport_energy_consumption) {}
+      passenger_count_(std::max(passenger_count, 0)),
+      cruise_speed_(std::max(cruise_speed, PhQ::Speed::Zero())),
+      battery_capacity_(std::max(battery_capacity, PhQ::Energy::Zero())),
+      charging_duration_(std::max(charging_duration, PhQ::Time::Zero())),
+      fault_rate_(std::max(fault_rate, PhQ::Frequency::Zero())),
+      transport_energy_consumption_(
+          std::max(transport_energy_consumption,
+                   PhQ::TransportEnergyConsumption::Zero())) {}
 
   constexpr const VehicleModelId Id() const noexcept { return id_; }
 
