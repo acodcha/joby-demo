@@ -45,15 +45,16 @@ TEST(VehicleModel, DefaultConstructor) {
 }
 
 TEST(VehicleModel, MainConstructor) {
-  const VehicleModel model = {
-      123,
-      "Manufacturer A",
-      "Model B",
-      4,
-      PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-      PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-      PhQ::Time(0.8, PhQ::Unit::Time::Hour),
-      PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
+  const VehicleModel model{
+      /*id=*/123,
+      /*manufacturer_name_english=*/"Manufacturer A",
+      /*model_name_english=*/"Model B",
+      /*passenger_count=*/4,
+      /*cruise_speed=*/PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
+      /*battery_capacity=*/PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
+      /*charging_duration=*/PhQ::Time(0.8, PhQ::Unit::Time::Hour),
+      /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
+      /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
           2.0, PhQ::Unit::Force::KilowattHourPerMile),
   };
