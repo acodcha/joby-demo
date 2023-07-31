@@ -52,7 +52,12 @@ public:
   // Constructs a vehicle with a given identifier and vehicle model.
   Vehicle(const VehicleId& id,
           const std::shared_ptr<const VehicleModel> model) noexcept
-    : id_(id), model_(model) {}
+    : id_(id), model_(model) {
+    // Initialize the vehicle to its full battery capacity.
+    if (model != nullptr) {
+      remaining_battery_ = model->BatteryCapacity();
+    }
+  }
 
   constexpr const VehicleId& Id() const noexcept { return id_; }
 
@@ -62,19 +67,22 @@ public:
 
   constexpr const VehicleStatus Status() const noexcept { return status_; }
 
+  constexpr const PhQ::Energy& RemainingBattery() const noexcept {
+    return remaining_battery_;
+  }
+
   constexpr const Demo::Statistics& Statistics() const noexcept {
     return statistics_;
   }
 
 private:
-  // Globally-unique identifier of this vehicle.
   VehicleId id_ = 0;
 
-  // Vehicle model of this vehicle.
   std::shared_ptr<const VehicleModel> model_;
 
-  // Current status of this vehicle.
   VehicleStatus status_ = VehicleStatus::OnStandby;
+
+  PhQ::Energy remaining_battery_ = PhQ::Energy::Zero();
 
   Demo::Statistics statistics_;
 };
