@@ -35,6 +35,7 @@ TEST(Vehicle, DefaultConstructor) {
   EXPECT_EQ(vehicle.Id(), 0);
   EXPECT_EQ(vehicle.Model(), nullptr);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
+  EXPECT_EQ(vehicle.RemainingBattery(), PhQ::Energy::Zero());
   EXPECT_EQ(vehicle.Statistics(), Statistics());
 }
 
@@ -60,6 +61,8 @@ TEST(Vehicle, MainConstructor) {
   EXPECT_EQ(vehicle.Id(), id);
   EXPECT_EQ(vehicle.Model(), model);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
+  EXPECT_EQ(vehicle.RemainingBattery(),
+            PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour));
   EXPECT_EQ(vehicle.Statistics(), Statistics());
 }
 
