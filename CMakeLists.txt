@@ -84,3 +84,7 @@ gtest_discover_tests(test-vehicle)
 add_executable(test-vehicle-model ${PROJECT_SOURCE_DIR}/test/VehicleModel.cpp)
 target_link_libraries(test-vehicle-model PhQ GTest::gtest_main)
 gtest_discover_tests(test-vehicle-model)
+
+add_executable(test-vehicle-models ${PROJECT_SOURCE_DIR}/test/VehicleModels.cpp)
+target_link_libraries(test-vehicle-models PhQ GTest::gtest_main)
+gtest_discover_tests(test-vehicle-models)
