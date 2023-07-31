@@ -34,29 +34,31 @@ namespace Demo {
 // Container for a collection of vehicle models.
 class VehicleModels {
 private:
+  // Vector of vehicle models.
   using ModelVector = std::vector<std::shared_ptr<const VehicleModel>>;
 
-  // Map of vehicle model IDs to vehicle models. This implementation assumes
-  // that only a small number of vehicle models are used, say 20 or fewer. If
-  // more vehicle models are used, this implementation should instead use a hash
-  // map rather than a binary tree map.
-  using IdToModelMap =
-      std::map<VehicleModelId, std::shared_ptr<const VehicleModel>>;
+  // Map of vehicle model IDs to the index of the corresponding vehicle model in
+  // the vector. This implementation assumes that only a small number of vehicle
+  // models are used, say 20 or fewer. If more vehicle models are used, this
+  // implementation should instead use a hash map rather than a binary tree map.
+  using IdToIndex = std::map<VehicleModelId, std::size_t>;
 
 public:
   // Default constructor. Initializes an empty collection of vehicle models.
   VehicleModels() noexcept = default;
 
+  // Returns whether the collection is empty.
   bool empty() const noexcept { return models_.empty(); }
 
+  // Returns the number of vehicle models in the collection.
   std::size_t size() const noexcept { return models_.size(); }
 
   // Attempts to insert a new vehicle model into the collection. Returns true if
   // the new vehicle model was successfully inserted, or false otherwise.
   bool insert(const std::shared_ptr<const VehicleModel> model) noexcept {
     if (model != nullptr) {
-      const std::pair<IdToModelMap::const_iterator, bool> result =
-          ids_to_models_.emplace(model->Id(), model);
+      const std::pair<IdToIndex::const_iterator, bool> result =
+          ids_to_indices_.emplace(model->Id(), models_.size());
       if (result.second) {
         models_.push_back(model);
       }
@@ -69,9 +71,9 @@ public:
   // nullptr if that vehicle model ID is not found in this collection.
   std::shared_ptr<const VehicleModel> at(
       const VehicleModelId id) const noexcept {
-    const IdToModelMap::const_iterator id_and_model = ids_to_models_.find(id);
-    if (id_and_model != ids_to_models_.cend()) {
-      return id_and_model->second;
+    const IdToIndex::const_iterator id_and_index = ids_to_indices_.find(id);
+    if (id_and_index != ids_to_indices_.cend()) {
+      return models_[id_and_index->second];
     }
     return nullptr;
   }
@@ -109,7 +111,7 @@ public:
 private:
   ModelVector models_;
 
-  IdToModelMap ids_to_models_;
+  IdToIndex ids_to_indices_;
 };
 
 }  // namespace Demo
