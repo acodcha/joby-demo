@@ -105,7 +105,6 @@ TEST(VehicleModels, Random) {
   random_generator.seed(0);
   EXPECT_EQ(models.random(random_generator), nullptr);
   models.insert(model123);
-  ASSERT_NE(models.random(random_generator), nullptr);
   EXPECT_EQ(models.random(random_generator), model123);
   models.insert(model456);
   EXPECT_NE(models.random(random_generator), nullptr);
