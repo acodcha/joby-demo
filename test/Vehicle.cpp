@@ -41,19 +41,23 @@ TEST(Vehicle, DefaultConstructor) {
 TEST(Vehicle, MainConstructor) {
   const VehicleId id = 456;
 
-  const std::shared_ptr<const VehicleModel> model =
-      std::make_shared<const VehicleModel>(
-          123, "Manufacturer A", "Model B", 4,
-          PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-          PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-          PhQ::Time(0.8, PhQ::Unit::Time::Hour),
-          PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
-          PhQ::TransportEnergyConsumption(
-              2.0, PhQ::Unit::Force::KilowattHourPerMile));
+  const std::shared_ptr<const VehicleModel> model = std::make_shared<
+      const VehicleModel>(
+      /*id=*/123,
+      /*manufacturer_name_english=*/"Manufacturer A",
+      /*model_name_english=*/"Model B",
+      /*passenger_count=*/4,
+      /*cruise_speed=*/PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
+      /*battery_capacity=*/PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
+      /*charging_duration=*/PhQ::Time(0.8, PhQ::Unit::Time::Hour),
+      /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
+      /*transport_energy_consumption=*/
+      PhQ::TransportEnergyConsumption(
+          2.0, PhQ::Unit::Force::KilowattHourPerMile));
 
   const Vehicle vehicle = {id, model};
 
-  EXPECT_EQ(vehicle.Id(), 456);
+  EXPECT_EQ(vehicle.Id(), id);
   EXPECT_EQ(vehicle.Model(), model);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
   EXPECT_EQ(vehicle.Statistics(), Statistics());
