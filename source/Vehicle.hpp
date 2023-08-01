@@ -258,12 +258,12 @@ private:
     return false;
   }
 
-  // This vehicle begins charging at its charging station.
+  // This vehicle begins charging at its current charging station.
   void BeginCharging() noexcept {
     statistics_.IncrementTotalChargingSessionCount();
   }
 
-  // This vehicle charges its battery at a charging station.
+  // This vehicle charges its battery at its current charging station.
   void Charge(
       const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
     status_ = VehicleStatus::Charging;
@@ -275,7 +275,7 @@ private:
     RandomlyGenerateFaults(duration, random_generator);
   }
 
-  // Given a time duration, randomly generate faults during this time according
+  // Given a time duration, randomly generates faults during this time according
   // to this vehicle model's mean fault rate using a random Poisson process.
   void RandomlyGenerateFaults(
       const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
