@@ -40,7 +40,7 @@ using VehicleModelId = int64_t;
 // TODO: This could use a Protocol Buffer schema.
 class VehicleModel {
 public:
-  // Default constructor.
+  // Default constructor. Initializes all properties to zero.
   VehicleModel() noexcept = default;
 
   // Constructs a vehicle model from the given parameters. Checks the given
@@ -62,7 +62,8 @@ public:
       fault_rate_(std::max(fault_rate, PhQ::Frequency::Zero())),
       transport_energy_consumption_(
           std::max(transport_energy_consumption,
-                   PhQ::TransportEnergyConsumption::Zero())) {
+                   PhQ::TransportEnergyConsumption::Zero())),
+      transport_power_usage_(cruise_speed_ * transport_energy_consumption_) {
     if (charging_duration_ > PhQ::Time::Zero()) {
       charging_rate_ = battery_capacity_ / charging_duration_;
     }
@@ -125,6 +126,12 @@ public:
     return transport_energy_consumption_;
   }
 
+  // Power usage in transport for this vehicle model, which measures the rate at
+  // which energy is used per unit time while traveling.
+  constexpr const PhQ::Power& TransportPowerUsage() const noexcept {
+    return transport_power_usage_;
+  }
+
   // Rate when charging this vehicle model's battery.
   constexpr const PhQ::Power& ChargingRate() const noexcept {
     return charging_rate_;
@@ -161,6 +168,8 @@ private:
 
   PhQ::TransportEnergyConsumption transport_energy_consumption_ =
       PhQ::TransportEnergyConsumption::Zero();
+
+  PhQ::Power transport_power_usage_ = PhQ::Power::Zero();
 
   PhQ::Power charging_rate_ = PhQ::Power::Zero();
 
