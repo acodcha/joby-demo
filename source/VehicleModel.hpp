@@ -58,7 +58,7 @@ public:
       cruise_speed_(std::max(cruise_speed, PhQ::Speed::Zero())),
       battery_capacity_(std::max(battery_capacity, PhQ::Energy::Zero())),
       charging_duration_(std::max(charging_duration, PhQ::Time::Zero())),
-      fault_rate_(std::max(fault_rate, PhQ::Frequency::Zero())),
+      mean_fault_rate_(std::max(fault_rate, PhQ::Frequency::Zero())),
       transport_energy_consumption_(
           std::max(transport_energy_consumption,
                    PhQ::TransportEnergyConsumption::Zero())),
@@ -113,9 +113,10 @@ public:
     return charging_duration_;
   }
 
-  // Fault rate per unit time of this vehicle model.
-  constexpr const PhQ::Frequency FaultRate() const noexcept {
-    return fault_rate_;
+  // Mean fault rate of this vehicle model. This is the expected value for the
+  // number of faults per unit time for this vehicle model.
+  constexpr const PhQ::Frequency MeanFaultRate() const noexcept {
+    return mean_fault_rate_;
   }
 
   // Energy consumption in transport for this vehicle model, which measures
@@ -163,7 +164,7 @@ private:
 
   PhQ::Time charging_duration_ = PhQ::Time::Zero();
 
-  PhQ::Frequency fault_rate_ = PhQ::Frequency::Zero();
+  PhQ::Frequency mean_fault_rate_ = PhQ::Frequency::Zero();
 
   PhQ::TransportEnergyConsumption transport_energy_consumption_ =
       PhQ::TransportEnergyConsumption::Zero();

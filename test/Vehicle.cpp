@@ -36,6 +36,7 @@ TEST(Vehicle, DefaultConstructor) {
   EXPECT_EQ(vehicle.Model(), nullptr);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
   EXPECT_EQ(vehicle.Battery(), PhQ::Energy::Zero());
+  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
   EXPECT_EQ(vehicle.Statistics(), Statistics());
   EXPECT_EQ(vehicle.Range(), PhQ::Length::Zero());
   EXPECT_EQ(vehicle.Endurance(), PhQ::Time::Zero());
@@ -67,6 +68,7 @@ TEST(Vehicle, MainConstructor) {
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
   EXPECT_EQ(
       vehicle.Battery(), PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour));
+  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
   EXPECT_EQ(vehicle.Statistics(), Statistics());
   EXPECT_EQ(vehicle.Range(), model->RangeLimit());
   EXPECT_EQ(vehicle.Endurance(), model->EnduranceLimit());

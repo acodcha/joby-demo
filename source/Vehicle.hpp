@@ -23,7 +23,10 @@
 //     https://github.com/acodcha/joby-demo
 
 #include <memory>
+#include <optional>
+#include <random>
 
+#include "ChargingStations.hpp"
 #include "Statistics.hpp"
 #include "VehicleId.hpp"
 #include "VehicleModel.hpp"
@@ -60,6 +63,14 @@ public:
 
   // Current remaining energy in the battery of this vehicle.
   constexpr const PhQ::Energy& Battery() const noexcept { return battery_; }
+
+  // Returns the charging station ID at which this vehicle is currently either
+  // queued or charging, or std::nullopt if this vehicle is not currently at a
+  // charging station.
+  constexpr const std::optional<Demo::ChargingStationId>&
+  ChargingStationId() const noexcept {
+    return charging_station_id_;
+  }
 
   // Statistics of this vehicle.
   constexpr const Demo::Statistics& Statistics() const noexcept {
@@ -122,7 +133,163 @@ public:
     }
   }
 
+  // Proceeds forward in time during a time step of the simulation. If the given
+  // time duration is greater than the time duration to the next status change,
+  // it is reduced to match this duration. This method should be called once for
+  // each vehicle at each time step of the simulation.
+  void PerformTimeStep(
+      const PhQ::Time& duration, ChargingStations& charging_stations,
+      std::mt19937_64& random_generator) noexcept {
+    const PhQ::Time effective_duration =
+        std::min(duration, DurationToNextStatusChange());
+    switch (status_) {
+      case VehicleStatus::OnStandby:
+        if (battery_ > PhQ::Energy::Zero()) {
+          Takeoff();
+          Fly(effective_duration, random_generator);
+        } else {
+          EnqueueAtChargingStation(charging_stations);
+        }
+        break;
+      case VehicleStatus::WaitingToCharge:
+        if (CanBeginCharging(charging_stations)) {
+          BeginCharging();
+          Charge(effective_duration, random_generator);
+        }
+        break;
+      case VehicleStatus::Charging:
+        Charge(effective_duration, random_generator);
+        break;
+      case VehicleStatus::Flying:
+        Fly(effective_duration, random_generator);
+        break;
+    }
+  }
+
+  // Updates the current vehicle at the end of a time step of the simulation.
+  // For example, if the vehicle was flying but is now at zero battery, it
+  // lands. Or, if the vehicle was charging but is now at full battery, it takes
+  // off. This method should be called once for each vehicle at each time step
+  // of the simulation after each vehicle has completed its Proceed() method.
+  void UpdateAtEndOfTimeStep(ChargingStations& charging_stations) noexcept {
+    switch (status_) {
+      case VehicleStatus::OnStandby:
+        // Remain on standby. No change.
+        break;
+      case VehicleStatus::WaitingToCharge:
+        // Continue waiting. No change.
+        break;
+      case VehicleStatus::Charging:
+        if (battery_ >= model_->BatteryCapacity()) {
+          battery_ = model_->BatteryCapacity();
+          DequeueFromChargingStation(charging_stations);
+          Takeoff();
+        }
+        break;
+      case VehicleStatus::Flying:
+        if (battery_ <= PhQ::Energy::Zero()) {
+          battery_ = PhQ::Energy::Zero();
+          Land();
+        }
+        break;
+    }
+  }
+
 private:
+  // This vehicle takes off and begins flying.
+  void Takeoff() noexcept {
+    status_ = VehicleStatus::Flying;
+    statistics_.IncrementTotalFlightCount();
+  }
+
+  // This vehicle lands.
+  void Land() noexcept { status_ = VehicleStatus::OnStandby; }
+
+  // This vehicle enqueues at a charging station.
+  void EnqueueAtChargingStation(ChargingStations& charging_stations) noexcept {
+    const std::shared_ptr<ChargingStation> best_charging_station =
+        charging_stations.LowestCount();
+    if (best_charging_station != nullptr) {
+      best_charging_station->Enqueue(id_);
+      charging_station_id_ = best_charging_station->Id();
+      status_ = VehicleStatus::WaitingToCharge;
+    }
+  }
+
+  // This vehicle stops charging at its current charging station and dequeues
+  // from it.
+  void DequeueFromChargingStation(
+      ChargingStations& charging_stations) noexcept {
+    if (charging_station_id_.has_value()) {
+      const std::shared_ptr<ChargingStation> charging_station =
+          charging_stations.At(charging_station_id_.value());
+      if (charging_station != nullptr) {
+        charging_station->Dequeue();
+        charging_station_id_.reset();
+      }
+    }
+  }
+
+  // This vehicle flies for a given time duration.
+  void Fly(
+      const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
+    status_ = VehicleStatus::Flying;
+    if (model_ == nullptr) {
+      return;
+    }
+    const PhQ::Length distance = model_->CruiseSpeed() * duration;
+    battery_ -= model_->TransportPowerUsage() * duration;
+    statistics_.ModifyTotalFlightDurationAndDistance(
+        model_->PassengerCount(), duration, distance);
+    RandomlyGenerateFaults(duration, random_generator);
+  }
+
+  // Returns whether this vehicle can now begin charging at its current charging
+  // station.
+  bool CanBeginCharging(ChargingStations& charging_stations) noexcept {
+    if (charging_station_id_.has_value()) {
+      const std::shared_ptr<ChargingStation> charging_station =
+          charging_stations.At(charging_station_id_.value());
+      const std::optional<VehicleId> front_id = charging_station->Front();
+      if (front_id.has_value() && front_id == id_) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // This vehicle begins charging at its charging station.
+  void BeginCharging() noexcept {
+    statistics_.IncrementTotalChargingSessionCount();
+  }
+
+  // This vehicle charges its battery at a charging station.
+  void Charge(
+      const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
+    status_ = VehicleStatus::Charging;
+    if (model_ == nullptr) {
+      return;
+    }
+    battery_ += model_->ChargingRate() * duration;
+    statistics_.ModifyTotalChargingSessionDuration(duration);
+    RandomlyGenerateFaults(duration, random_generator);
+  }
+
+  // Given a time duration, randomly generate faults during this time according
+  // to this vehicle model's mean fault rate using a random Poisson process.
+  void RandomlyGenerateFaults(
+      const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
+    if (model_ == nullptr) {
+      return;
+    }
+    const double expected_faults_during_this_duration =
+        duration * model_->MeanFaultRate();
+    std::poisson_distribution<int64_t> distribution(
+        expected_faults_during_this_duration);
+    const int64_t faults_during_this_duration = distribution(random_generator);
+    statistics_.ModifyTotalFaultCount(faults_during_this_duration);
+  }
+
   VehicleId id_ = 0;
 
   std::shared_ptr<const VehicleModel> model_;
@@ -130,6 +297,8 @@ private:
   VehicleStatus status_ = VehicleStatus::OnStandby;
 
   PhQ::Energy battery_ = PhQ::Energy::Zero();
+
+  std::optional<Demo::ChargingStationId> charging_station_id_;
 
   Demo::Statistics statistics_;
 };
