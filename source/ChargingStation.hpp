@@ -49,7 +49,7 @@ public:
   // Returns whether this charging station is empty.
   bool Empty() const noexcept { return queue_.empty(); }
 
-  // Returns the number of vehicles at this charging station (either queued or
+  // Returns the count of vehicles at this charging station (either queued or
   // charging).
   std::size_t Count() const noexcept { return queue_.size(); }
 
