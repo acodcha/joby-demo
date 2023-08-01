@@ -24,6 +24,7 @@
 
 #include <PhQ/Energy.hpp>
 #include <PhQ/Frequency.hpp>
+#include <PhQ/Power.hpp>
 #include <PhQ/Speed.hpp>
 #include <PhQ/Time.hpp>
 #include <PhQ/TransportEnergyConsumption.hpp>
@@ -36,7 +37,7 @@ namespace Demo {
 using VehicleModelId = int64_t;
 
 // Properties of a vehicle model.
-// TODO: This should probably use a Protocol Buffer schema.
+// TODO: This could use a Protocol Buffer schema.
 class VehicleModel {
 public:
   // Default constructor.
@@ -61,77 +62,111 @@ public:
       fault_rate_(std::max(fault_rate, PhQ::Frequency::Zero())),
       transport_energy_consumption_(
           std::max(transport_energy_consumption,
-                   PhQ::TransportEnergyConsumption::Zero())) {}
+                   PhQ::TransportEnergyConsumption::Zero())) {
+    if (charging_duration_ > PhQ::Time::Zero()) {
+      charging_rate_ = battery_capacity_ / charging_duration_;
+    }
+    if (transport_energy_consumption_
+        > PhQ::TransportEnergyConsumption::Zero()) {
+      range_limit_ = battery_capacity_ / transport_energy_consumption_;
+    }
+    if (cruise_speed_ > PhQ::Speed::Zero()) {
+      endurance_limit_ = range_limit_ / cruise_speed_;
+    }
+  }
 
+  // Globally-unique identifier for this vehicle model.
   constexpr const VehicleModelId Id() const noexcept { return id_; }
 
+  // Name of the manufacturer of this vehicle model in English.
+  // TODO: Consider using a Name class to handle names in multiple languages.
   const std::string_view ManufacturerNameEnglish() const noexcept {
     return manufacturer_name_english_;
   }
 
+  // Name of this vehicle model in English.
+  // TODO: Consider using a Name class to handle names in multiple languages.
   const std::string_view ModelNameEnglish() const noexcept {
     return model_name_english_;
   }
 
+  // Maximum number of passengers that this vehicle model can carry at a time.
+  // This only includes passengers and excludes pilots and other crew, if any.
+  // TODO: Consider adding a crew count.
   constexpr const int32_t PassengerCount() const noexcept {
     return passenger_count_;
   }
 
+  // Cruise speed of this vehicle model during steady level flight.
   constexpr const PhQ::Speed CruiseSpeed() const noexcept {
     return cruise_speed_;
   }
 
+  // Energy capacity of the vehicle model's battery when fully charged.
   constexpr const PhQ::Energy BatteryCapacity() const noexcept {
     return battery_capacity_;
   }
 
+  // Time duration to charge the battery from zero charge to a full charge for
+  // this vehicle model.
   constexpr const PhQ::Time ChargingDuration() const noexcept {
     return charging_duration_;
   }
 
+  // Fault rate per unit time of this vehicle model.
   constexpr const PhQ::Frequency FaultRate() const noexcept {
     return fault_rate_;
   }
 
+  // Energy consumption in transport for this vehicle model, which measures
+  // energy use per distance traveled.
   constexpr const PhQ::TransportEnergyConsumption
   TransportEnergyConsumption() const noexcept {
     return transport_energy_consumption_;
   }
 
+  // Rate when charging this vehicle model's battery.
+  constexpr const PhQ::Power& ChargingRate() const noexcept {
+    return charging_rate_;
+  }
+
+  // Range limit of this vehicle model. This is the maximum distance this
+  // vehicle can travel starting with a full battery charge.
+  constexpr const PhQ::Length& RangeLimit() const noexcept {
+    return range_limit_;
+  }
+
+  // Endurance limit of this vehicle model. This is the maximum time duration
+  // this vehicle can remain in flight starting with a full battery charge.
+  constexpr const PhQ::Time& EnduranceLimit() const noexcept {
+    return endurance_limit_;
+  }
+
 private:
-  // Globally-unique identifier for this vehicle model.
   VehicleModelId id_ = 0;
 
-  // Name of the manufacturer of this vehicle model in English.
-  // TODO: Do we need the manufacturer name in other languages?
   std::string manufacturer_name_english_;
 
-  // Name of this vehicle model in English.
-  // TODO: Do we need the model name in other languages?
   std::string model_name_english_;
 
-  // Maximum number of passengers that this vehicle model can carry at a time.
-  // This only includes passengers and excludes pilots and other crew, if any.
-  // TODO: Consider a pilot count and other crew count?
   int32_t passenger_count_ = 0;
 
-  // Cruise speed of this vehicle model during steady level flight.
   PhQ::Speed cruise_speed_ = PhQ::Speed::Zero();
 
-  // Energy capacity of the vehicle model's battery when fully charged.
   PhQ::Energy battery_capacity_ = PhQ::Energy::Zero();
 
-  // Time duration to charge the battery from zero charge to a full charge for
-  // this vehicle model.
   PhQ::Time charging_duration_ = PhQ::Time::Zero();
 
-  // Fault rate per unit time of this vehicle model.
   PhQ::Frequency fault_rate_ = PhQ::Frequency::Zero();
 
-  // Energy consumption in transport for this vehicle model, which measures
-  // energy use per distance traveled.
   PhQ::TransportEnergyConsumption transport_energy_consumption_ =
       PhQ::TransportEnergyConsumption::Zero();
+
+  PhQ::Power charging_rate_ = PhQ::Power::Zero();
+
+  PhQ::Length range_limit_ = PhQ::Length::Zero();
+
+  PhQ::Time endurance_limit_ = PhQ::Time::Zero();
 };
 
 }  // namespace Demo
