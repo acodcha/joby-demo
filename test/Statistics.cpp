@@ -35,13 +35,12 @@ TEST(Statistics, DefaultConstructor) {
   EXPECT_EQ(statistics.TotalFlightCount(), 0);
   EXPECT_EQ(statistics.TotalFlightDuration(), PhQ::Time::Zero());
   EXPECT_EQ(statistics.TotalFlightDistance(), PhQ::Length::Zero());
-  EXPECT_EQ(statistics.MeanFlightDurationPerFlight(), PhQ::Time::Zero());
-  EXPECT_EQ(statistics.MeanFlightDistancePerFlight(), PhQ::Length::Zero());
-  EXPECT_EQ(statistics.TotalPassengerDistance(), PhQ::Length::Zero());
-  EXPECT_EQ(statistics.TotalChargingSessionsCount(), 0);
+  EXPECT_EQ(statistics.TotalFlightPassengerDistance(), PhQ::Length::Zero());
+  EXPECT_EQ(statistics.MeanFlightDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(statistics.MeanFlightDistance(), PhQ::Length::Zero());
+  EXPECT_EQ(statistics.TotalChargingSessionCount(), 0);
   EXPECT_EQ(statistics.TotalChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(
-      statistics.MeanChargingDurationPerChargingSession(), PhQ::Time::Zero());
+  EXPECT_EQ(statistics.MeanChargingDuration(), PhQ::Time::Zero());
   EXPECT_EQ(statistics.TotalFaultCount(), 0);
 }
 

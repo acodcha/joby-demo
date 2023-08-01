@@ -39,7 +39,7 @@ TEST(VehicleModel, DefaultConstructor) {
   EXPECT_EQ(model.CruiseSpeed(), PhQ::Speed::Zero());
   EXPECT_EQ(model.BatteryCapacity(), PhQ::Energy::Zero());
   EXPECT_EQ(model.ChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(model.FaultRate(), PhQ::Frequency::Zero());
+  EXPECT_EQ(model.MeanFaultRate(), PhQ::Frequency::Zero());
   EXPECT_EQ(model.TransportEnergyConsumption(),
             PhQ::TransportEnergyConsumption::Zero());
   EXPECT_EQ(model.TransportPowerUsage(), PhQ::Power::Zero());
@@ -72,8 +72,8 @@ TEST(VehicleModel, MainConstructor) {
             PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour));
 
   EXPECT_EQ(model.ChargingDuration(), PhQ::Time(0.8, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(
-      model.FaultRate(), PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour));
+  EXPECT_EQ(model.MeanFaultRate(),
+            PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour));
   EXPECT_EQ(model.TransportEnergyConsumption(),
             PhQ::TransportEnergyConsumption(
                 2.0, PhQ::Unit::Force::KilowattHourPerMile));
@@ -116,7 +116,7 @@ TEST(VehicleModel, NegativeValues) {
   EXPECT_EQ(model.CruiseSpeed(), PhQ::Speed::Zero());
   EXPECT_EQ(model.BatteryCapacity(), PhQ::Energy::Zero());
   EXPECT_EQ(model.ChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(model.FaultRate(), PhQ::Frequency::Zero());
+  EXPECT_EQ(model.MeanFaultRate(), PhQ::Frequency::Zero());
   EXPECT_EQ(model.TransportEnergyConsumption(),
             PhQ::TransportEnergyConsumption::Zero());
   EXPECT_EQ(model.TransportPowerUsage(), PhQ::Power::Zero());

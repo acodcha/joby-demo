@@ -76,7 +76,7 @@ public:
     if (Empty()) {
       return nullptr;
     }
-    std::uniform_int_distribution<> distribution(0, Size() - 1);
+    std::uniform_int_distribution<std::size_t> distribution(0, Size() - 1);
     return data_[distribution(random_generator)];
   }
 
