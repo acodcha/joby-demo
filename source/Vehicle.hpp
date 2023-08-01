@@ -25,54 +25,101 @@
 #include <memory>
 
 #include "Statistics.hpp"
+#include "VehicleId.hpp"
 #include "VehicleModel.hpp"
+#include "VehicleStatus.hpp"
 
 namespace Demo {
 
-// Globally-unique identifier of a vehicle. Not to be confused with
-// VehicleModelId, which is a globally-unique identifier for a vehicle model
-// rather than a vehicle.
-using VehicleId = int64_t;
-
-// Status of a vehicle at a given time.
-enum class VehicleStatus : int8_t {
-  OnStandby,
-  WaitingToCharge,
-  Charging,
-  Flying,
-};
-
-// Simple class representing a vehicle.
+// An individual vehicle of a given vehicle model.
 class Vehicle {
 public:
-  // Default constructor. Initializes the identifier to 0 and the model to the
-  // null pointer.
+  // Default constructor. Initializes all properties to zero.
   constexpr Vehicle() noexcept = default;
 
-  // Constructs a vehicle with a given identifier and vehicle model.
+  // Constructs a vehicle with a given ID and vehicle model.
   Vehicle(const VehicleId& id,
           const std::shared_ptr<const VehicleModel> model) noexcept
     : id_(id), model_(model) {
-    // Initialize the vehicle to its full battery capacity.
+    // Initialize the vehicle to a fully-charged battery.
     if (model != nullptr) {
-      remaining_battery_ = model->BatteryCapacity();
+      battery_ = model->BatteryCapacity();
     }
   }
 
+  // Globally-unique identifier for this vehicle.
   constexpr const VehicleId& Id() const noexcept { return id_; }
 
+  // Vehicle model of this vehicle.
   const std::shared_ptr<const VehicleModel>& Model() const noexcept {
     return model_;
   }
 
+  // Current status of this vehicle.
   constexpr const VehicleStatus Status() const noexcept { return status_; }
 
-  constexpr const PhQ::Energy& RemainingBattery() const noexcept {
-    return remaining_battery_;
-  }
+  // Current remaining energy in the battery of this vehicle.
+  constexpr const PhQ::Energy& Battery() const noexcept { return battery_; }
 
+  // Statistics of this vehicle.
   constexpr const Demo::Statistics& Statistics() const noexcept {
     return statistics_;
+  }
+
+  // Current range of this vehicle. This is the maximum distance that this
+  // vehicle can travel given its current battery charge.
+  PhQ::Length Range() const noexcept {
+    if (model_ == nullptr) {
+      return PhQ::Length::Zero();
+    }
+    if (model_->TransportEnergyConsumption()
+        <= PhQ::TransportEnergyConsumption::Zero()) {
+      return PhQ::Length::Zero();
+    }
+    return battery_ / model_->TransportEnergyConsumption();
+  }
+
+  // Current endurance of this vehicle. This is the maximum time duration that
+  // this vehicle can remain in flight given its current battery charge.
+  PhQ::Time Endurance() const noexcept {
+    if (model_ == nullptr) {
+      return PhQ::Time::Zero();
+    }
+    if (model_->CruiseSpeed() <= PhQ::Speed::Zero()) {
+      return PhQ::Time::Zero();
+    }
+    return Range() / model_->CruiseSpeed();
+  }
+
+  // Current time duration to fully charge this vehicle's battery given its
+  // current battery charge.
+  PhQ::Time DurationToFullCharge() const noexcept {
+    if (model_ == nullptr) {
+      return PhQ::Time::Zero();
+    }
+    if (battery_ >= model_->BatteryCapacity()) {
+      return PhQ::Time::Zero();
+    }
+    if (model_->ChargingRate() <= PhQ::Power::Zero()) {
+      return PhQ::Time::Zero();
+    }
+    const PhQ::Energy energy_to_full_charge =
+        model_->BatteryCapacity() - battery_;
+    return energy_to_full_charge / model_->ChargingRate();
+  }
+
+  // Returns the time duration to the next status change of this vehicle.
+  PhQ::Time DurationToNextStatusChange() const noexcept {
+    switch (status_) {
+      case VehicleStatus::OnStandby:
+        return Endurance();
+      case VehicleStatus::WaitingToCharge:
+        return DurationToFullCharge();
+      case VehicleStatus::Charging:
+        return DurationToFullCharge();
+      case VehicleStatus::Flying:
+        return Endurance();
+    }
   }
 
 private:
@@ -82,7 +129,7 @@ private:
 
   VehicleStatus status_ = VehicleStatus::OnStandby;
 
-  PhQ::Energy remaining_battery_ = PhQ::Energy::Zero();
+  PhQ::Energy battery_ = PhQ::Energy::Zero();
 
   Demo::Statistics statistics_;
 };

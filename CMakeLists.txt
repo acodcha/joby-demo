@@ -69,6 +69,10 @@ enable_testing()
 
 # Define tests.
 
+add_executable(test-charging-station ${PROJECT_SOURCE_DIR}/test/ChargingStation.cpp)
+target_link_libraries(test-charging-station PhQ GTest::gtest_main)
+gtest_discover_tests(test-charging-station)
+
 add_executable(test-simulation-settings ${PROJECT_SOURCE_DIR}/test/SimulationSettings.cpp)
 target_link_libraries(test-simulation-settings PhQ GTest::gtest_main)
 gtest_discover_tests(test-simulation-settings)

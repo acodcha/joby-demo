@@ -31,10 +31,9 @@
 #include <string>
 #include <string_view>
 
-namespace Demo {
+#include "VehicleModelId.hpp"
 
-// Globally-unique identifier of a vehicle model.
-using VehicleModelId = int64_t;
+namespace Demo {
 
 // Properties of a vehicle model.
 // TODO: This could use a Protocol Buffer schema.
