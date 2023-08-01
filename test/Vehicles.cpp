@@ -81,6 +81,15 @@ TEST(Vehicles, Insert) {
   EXPECT_FALSE(vehicles.insert(vehicle456));
 }
 
+TEST(Vehicles, Exists) {
+  Vehicles vehicles;
+  vehicles.insert(vehicle123);
+  vehicles.insert(vehicle456);
+  EXPECT_TRUE(vehicles.exists(123));
+  EXPECT_TRUE(vehicles.exists(456));
+  EXPECT_FALSE(vehicles.exists(789));
+}
+
 TEST(Vehicles, At) {
   Vehicles vehicles;
   vehicles.insert(vehicle123);

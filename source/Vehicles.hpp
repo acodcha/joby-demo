@@ -64,6 +64,11 @@ public:
     return false;
   }
 
+  // Returns whether a given vehicle ID exists in this collection.
+  bool exists(const VehicleId id) const noexcept {
+    return ids_to_indices_.find(id) != ids_to_indices_.cend();
+  }
+
   // Returns the vehicle corresponding to a given vehicle ID, or nullptr if that
   // vehicle ID is not found in this collection.
   std::shared_ptr<Vehicle> at(const VehicleId id) const noexcept {

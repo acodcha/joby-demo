@@ -28,6 +28,7 @@
 namespace Demo {
 
 // Statistics of a vehicle or collection of vehicles.
+// TODO: This could use a Protocol Buffer schema.
 class Statistics {
 public:
   // Default constructor. Initializes all properties to zero.
