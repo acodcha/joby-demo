@@ -62,40 +62,38 @@ const std::shared_ptr<const VehicleModel> model456 =
 
 TEST(VehicleModels, Empty) {
   const VehicleModels empty_models;
-  EXPECT_TRUE(empty_models.empty());
-
+  EXPECT_TRUE(empty_models.Empty());
   VehicleModels two_models;
-  two_models.insert(model123);
-  two_models.insert(model456);
-  EXPECT_FALSE(two_models.empty());
+  two_models.Insert(model123);
+  two_models.Insert(model456);
+  EXPECT_FALSE(two_models.Empty());
 }
 
 TEST(VehicleModels, Size) {
   const VehicleModels empty_models;
-  EXPECT_EQ(empty_models.size(), 0);
-
+  EXPECT_EQ(empty_models.Size(), 0);
   VehicleModels two_models;
-  two_models.insert(model123);
-  two_models.insert(model456);
-  EXPECT_EQ(two_models.size(), 2);
+  two_models.Insert(model123);
+  two_models.Insert(model456);
+  EXPECT_EQ(two_models.Size(), 2);
 }
 
 TEST(VehicleModels, Insert) {
   VehicleModels models;
-  EXPECT_FALSE(models.insert(null_model));
-  EXPECT_TRUE(models.insert(model123));
-  EXPECT_FALSE(models.insert(model123));
-  EXPECT_TRUE(models.insert(model456));
-  EXPECT_FALSE(models.insert(model456));
+  EXPECT_FALSE(models.Insert(null_model));
+  EXPECT_TRUE(models.Insert(model123));
+  EXPECT_FALSE(models.Insert(model123));
+  EXPECT_TRUE(models.Insert(model456));
+  EXPECT_FALSE(models.Insert(model456));
 }
 
 TEST(VehicleModels, At) {
   VehicleModels models;
-  models.insert(model123);
-  models.insert(model456);
-  EXPECT_EQ(models.at(123), model123);
-  EXPECT_EQ(models.at(456), model456);
-  EXPECT_EQ(models.at(789), nullptr);
+  models.Insert(model123);
+  models.Insert(model456);
+  EXPECT_EQ(models.At(123), model123);
+  EXPECT_EQ(models.At(456), model456);
+  EXPECT_EQ(models.At(789), nullptr);
 }
 
 TEST(VehicleModels, Random) {
@@ -103,21 +101,21 @@ TEST(VehicleModels, Random) {
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());
   random_generator.seed(0);
-  EXPECT_EQ(models.random(random_generator), nullptr);
-  models.insert(model123);
-  EXPECT_EQ(models.random(random_generator), model123);
-  models.insert(model456);
-  EXPECT_NE(models.random(random_generator), nullptr);
+  EXPECT_EQ(models.Random(random_generator), nullptr);
+  models.Insert(model123);
+  EXPECT_EQ(models.Random(random_generator), model123);
+  models.Insert(model456);
+  EXPECT_NE(models.Random(random_generator), nullptr);
 }
 
 TEST(VehicleModels, Iterator) {
   VehicleModels models;
-  models.insert(model123);
-  models.insert(model456);
+  models.Insert(model123);
+  models.Insert(model456);
 
   int64_t count1 = 0;
-  for (const std::shared_ptr<const VehicleModel>& id_and_model : models) {
-    if (id_and_model != nullptr) {
+  for (const std::shared_ptr<const VehicleModel>& model : models) {
+    if (model != nullptr) {
       ++count1;
     }
   }

@@ -31,99 +31,93 @@
 
 namespace Demo {
 
-// Container for a collection of vehicles.
+// Collection of vehicles.
 class Vehicles {
-private:
-  // Vector of vehicles.
-  using VehicleVector = std::vector<std::shared_ptr<Vehicle>>;
-
-  // Map of vehicle IDs to the index of the corresponding vehicle in the vector.
-  using IdToIndex = std::unordered_map<VehicleId, std::size_t>;
-
 public:
-  // Default constructor. Initializes an empty collection of vehicles.
+  // Constructs an empty collection of vehicles.
   Vehicles() noexcept = default;
 
   // Returns whether the collection is empty.
-  bool empty() const noexcept { return vehicles_.empty(); }
+  bool Empty() const noexcept { return data_.empty(); }
 
   // Returns the number of vehicles in the collection.
-  std::size_t size() const noexcept { return vehicles_.size(); }
+  std::size_t Size() const noexcept { return data_.size(); }
 
   // Attempts to insert a new vehicle into the collection. Returns true if the
   // new vehicle was successfully inserted, or false otherwise.
-  bool insert(const std::shared_ptr<Vehicle> vehicle) noexcept {
-    if (vehicle != nullptr) {
-      const std::pair<IdToIndex::const_iterator, bool> result =
-          ids_to_indices_.emplace(vehicle->Id(), vehicles_.size());
-      if (result.second) {
-        vehicles_.push_back(vehicle);
-      }
-      return result.second;
+  bool Insert(const std::shared_ptr<Vehicle> vehicle) noexcept {
+    if (vehicle == nullptr) {
+      return false;
     }
-    return false;
+    const std::pair<std::unordered_map<VehicleId, std::size_t>::const_iterator,
+                    bool>
+        result = ids_to_indices_.emplace(vehicle->Id(), data_.size());
+    if (result.second) {
+      data_.push_back(vehicle);
+    }
+    return result.second;
   }
 
   // Returns whether a given vehicle ID exists in this collection.
-  bool exists(const VehicleId id) const noexcept {
+  bool Exists(const VehicleId id) const noexcept {
     return ids_to_indices_.find(id) != ids_to_indices_.cend();
   }
 
   // Returns the vehicle corresponding to a given vehicle ID, or nullptr if that
   // vehicle ID is not found in this collection.
-  std::shared_ptr<Vehicle> at(const VehicleId id) const noexcept {
-    const IdToIndex::const_iterator id_and_index = ids_to_indices_.find(id);
+  std::shared_ptr<Vehicle> At(const VehicleId id) const noexcept {
+    const std::unordered_map<VehicleId, std::size_t>::const_iterator
+        id_and_index = ids_to_indices_.find(id);
     if (id_and_index != ids_to_indices_.cend()) {
-      return vehicles_[id_and_index->second];
+      return data_[id_and_index->second];
     }
     return nullptr;
   }
 
   // Returns a random vehicle from the collection, or nullptr if the collection
   // is empty.
-  std::shared_ptr<Vehicle> random(
+  std::shared_ptr<Vehicle> Random(
       std::mt19937_64& random_generator) const noexcept {
-    if (empty()) {
+    if (Empty()) {
       return nullptr;
     }
-    std::uniform_int_distribution<> distribution(0, size() - 1);
-    return vehicles_[distribution(random_generator)];
+    std::uniform_int_distribution<> distribution(0, Size() - 1);
+    return data_[distribution(random_generator)];
   }
 
-  struct iterator : public VehicleVector::iterator {
-    iterator(const VehicleVector::iterator i) noexcept
-      : VehicleVector::iterator(i) {}
+  struct iterator : public std::vector<std::shared_ptr<Vehicle>>::iterator {
+    iterator(const std::vector<std::shared_ptr<Vehicle>>::iterator i) noexcept
+      : std::vector<std::shared_ptr<Vehicle>>::iterator(i) {}
   };
 
-  iterator begin() noexcept { return iterator(vehicles_.begin()); }
+  iterator begin() noexcept { return iterator(data_.begin()); }
 
-  iterator end() noexcept { return iterator(vehicles_.end()); }
+  iterator end() noexcept { return iterator(data_.end()); }
 
-  struct const_iterator : public VehicleVector::const_iterator {
-    const_iterator(const VehicleVector::const_iterator i) noexcept
-      : VehicleVector::const_iterator(i) {}
+  struct const_iterator
+    : public std::vector<std::shared_ptr<Vehicle>>::const_iterator {
+    const_iterator(
+        const std::vector<std::shared_ptr<Vehicle>>::const_iterator i) noexcept
+      : std::vector<std::shared_ptr<Vehicle>>::const_iterator(i) {}
   };
 
   const_iterator begin() const noexcept {
-    return const_iterator(vehicles_.begin());
+    return const_iterator(data_.begin());
   }
 
   const_iterator cbegin() const noexcept {
-    return const_iterator(vehicles_.cbegin());
+    return const_iterator(data_.cbegin());
   }
 
-  const_iterator end() const noexcept {
-    return const_iterator(vehicles_.end());
-  }
+  const_iterator end() const noexcept { return const_iterator(data_.end()); }
 
-  const_iterator cend() const noexcept {
-    return const_iterator(vehicles_.cend());
-  }
+  const_iterator cend() const noexcept { return const_iterator(data_.cend()); }
 
 private:
-  VehicleVector vehicles_;
+  std::vector<std::shared_ptr<Vehicle>> data_;
 
-  IdToIndex ids_to_indices_;
+  // Map of vehicle IDs to the index of the corresponding vehicle in the vector.
+  std::unordered_map<VehicleId, std::size_t> ids_to_indices_;
 };
 
 }  // namespace Demo
