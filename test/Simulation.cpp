@@ -22,40 +22,43 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include <iostream>
-#include <random>
+#include "../source/Simulation.hpp"
 
-#include "ChargingStations.hpp"
-#include "SampleVehicleModels.hpp"
-#include "Settings.hpp"
-#include "Simulation.hpp"
-#include "Vehicles.hpp"
+#include <gtest/gtest.h>
 
-int main(int argc, char* argv[]) {
-  std::cout << "Start of program." << std::endl;
+namespace Demo {
 
-  const Demo::Settings settings{
-      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/20,
-      /*charging_station_count=*/3,
-  };
+namespace {
 
-  const Demo::VehicleModels vehicle_models =
-      Demo::GenerateSampleVehicleModels();
+TEST(Simulation, Simple) {
+  const PhQ::Time duration{5.0, PhQ::Unit::Time::Second};
+
+  const std::shared_ptr<const VehicleModel> vehicle_model =
+      std::make_shared<const VehicleModel>(
+          /*id=*/123,
+          /*manufacturer_name_english=*/"Manufacturer A",
+          /*model_name_english=*/"Model B",
+          /*passenger_count=*/4,
+          /*cruise_speed=*/PhQ::Speed(1.0, PhQ::Unit::Speed::MetrePerSecond),
+          /*battery_capacity=*/PhQ::Energy(1.0, PhQ::Unit::Energy::Joule),
+          /*charging_duration=*/PhQ::Time(1.0, PhQ::Unit::Time::Second),
+          /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
+          /*transport_energy_consumption=*/
+          PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton));
+
+  Vehicles vehicles;
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/456, vehicle_model));
+
+  ChargingStations charging_stations{/*count=*/1};
 
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());
+  random_generator.seed(0);
 
-  Demo::Vehicles vehicles{
-      settings.VehicleCount(), vehicle_models, random_generator};
-
-  Demo::ChargingStations charging_stations{settings.ChargingStationCount()};
-
-  Demo::Simulation simulation;
-  simulation.Run(
-      settings.Duration(), vehicles, charging_stations, random_generator);
-
-  std::cout << "End of program." << std::endl;
-
-  return EXIT_SUCCESS;
+  Simulation simulation;
+  simulation.Run(duration, vehicles, charging_stations, random_generator);
 }
+
+}  // namespace
+
+}  // namespace Demo

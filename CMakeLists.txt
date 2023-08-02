@@ -81,6 +81,10 @@ add_executable(test-settings ${PROJECT_SOURCE_DIR}/test/Settings.cpp)
 target_link_libraries(test-settings PhQ GTest::gtest_main)
 gtest_discover_tests(test-settings)
 
+add_executable(test-simulation ${PROJECT_SOURCE_DIR}/test/Simulation.cpp)
+target_link_libraries(test-simulation PhQ GTest::gtest_main)
+gtest_discover_tests(test-simulation)
+
 add_executable(test-statistics ${PROJECT_SOURCE_DIR}/test/Statistics.cpp)
 target_link_libraries(test-statistics PhQ GTest::gtest_main)
 gtest_discover_tests(test-statistics)
