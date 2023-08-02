@@ -134,6 +134,21 @@ public:
     total_fault_count_ += difference;
   }
 
+  // Aggregates data from another set of statistics into this set of statistics.
+  void Aggregate(const Statistics& other) noexcept {
+    total_flight_count_ += other.total_flight_count_;
+    total_flight_duration_ += other.total_flight_duration_;
+    total_flight_distance_ += other.total_flight_distance_;
+    total_flight_passenger_distance_ += other.total_flight_passenger_distance_;
+    mean_flight_duration_ = total_flight_duration_ / total_flight_count_;
+    mean_flight_distance_ = total_flight_distance_ / total_flight_count_;
+    total_charging_session_count_ += other.total_charging_session_count_;
+    total_charging_duration_ += other.total_charging_duration_;
+    mean_charging_duration_ =
+        total_charging_duration_ / total_charging_session_count_;
+    total_fault_count_ += other.total_fault_count_;
+  }
+
   constexpr bool operator==(const Statistics& other) const noexcept {
     return total_flight_count_ == other.total_flight_count_
            && total_flight_duration_ == other.total_flight_duration_
