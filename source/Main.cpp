@@ -23,7 +23,9 @@
 //     https://github.com/acodcha/joby-demo
 
 #include <iostream>
+#include <random>
 
+#include "ChargingStations.hpp"
 #include "SampleVehicleModels.hpp"
 #include "SimulationSettings.hpp"
 #include "Vehicles.hpp"
@@ -43,7 +45,10 @@ int main(int argc, char* argv[]) {
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());
 
-  Demo::Vehicles vehicles{20, vehicle_models, random_generator};
+  Demo::Vehicles vehicles{
+      settings.VehicleCount(), vehicle_models, random_generator};
+
+  Demo::ChargingStations charging_stations{settings.ChargingStationCount()};
 
   std::cout << "End of program." << std::endl;
 
