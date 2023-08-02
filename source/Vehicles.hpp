@@ -31,6 +31,7 @@
 #include <vector>
 
 #include "Vehicle.hpp"
+#include "VehicleModels.hpp"
 
 namespace Demo {
 
@@ -39,6 +40,21 @@ class Vehicles {
 public:
   // Constructs an empty collection of vehicles.
   Vehicles() noexcept = default;
+
+  // Constructs a collection of vehicles by randomly generating a given number
+  // of vehicles from a collection of available vehicle models.
+  Vehicles(const int32_t count, const VehicleModels& models,
+           std::mt19937_64& random_generator) noexcept {
+    VehicleId id = 0;
+    for (int32_t vehicle_index = 0; vehicle_index < count; ++vehicle_index) {
+      const std::shared_ptr<const VehicleModel> model =
+          models.Random(random_generator);
+      if (model != nullptr) {
+        Insert(std::make_shared<Vehicle>(id, model));
+        ++id;
+      }
+    }
+  }
 
   // Returns whether the collection is empty.
   bool Empty() const noexcept { return data_.empty(); }
