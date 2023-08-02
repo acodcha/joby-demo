@@ -33,53 +33,40 @@ namespace Demo {
 // Settings of a vehicle fleet simulation.
 class SimulationSettings {
 public:
-  // Default constructor. Initializes all members to zero.
+  // Constructs simulation settings with all parameters initialized to zero.
   SimulationSettings() noexcept = default;
 
   // Constructs simulation settings from the given parameters. Checks the given
   // parameters for consistency and initializes all members accordingly.
   SimulationSettings(
-      const PhQ::Time& duration, const PhQ::Time& time_step,
-      const int32_t vehicle_count, const int32_t charging_station_count,
-      const std::optional<int64_t>& random_seed = std::nullopt) noexcept {
-    duration_ = std::max(duration, PhQ::Time::Zero());
-    InitializeTimeStepAndTimeStepCount(time_step);
-    vehicle_count_ = std::max(vehicle_count, 0);
-    charging_station_count_ = std::max(charging_station_count, 0);
-    random_seed_ = random_seed;
-  }
+      const PhQ::Time& duration, const int32_t vehicle_count,
+      const int32_t charging_station_count,
+      const std::optional<int64_t>& random_seed = std::nullopt) noexcept
+    : duration_(std::max(duration, PhQ::Time::Zero())),
+      vehicle_count_(std::max(vehicle_count, 0)),
+      charging_station_count_(std::max(charging_station_count, 0)),
+      random_seed_(random_seed) {}
 
+  // Time duration of the simulation.
   constexpr const PhQ::Time& Duration() const noexcept { return duration_; }
 
-  constexpr const PhQ::Time& TimeStep() const noexcept { return time_step_; }
-
-  constexpr int32_t TimeStepCount() const noexcept { return time_step_count_; }
-
+  // Number of vehicles in the simulation.
   constexpr int32_t VehicleCount() const noexcept { return vehicle_count_; }
 
+  // Number of charging stations in the simulation.
   constexpr int32_t ChargingStationCount() const noexcept {
     return charging_station_count_;
   }
 
+  // Random seed used to generate pseudo-random numbers in the simulation, or
+  // std::nullopt, in which case random numbers generated in the simulation are
+  // truly random.
   constexpr const std::optional<int64_t>& RandomSeed() const noexcept {
     return random_seed_;
   }
 
 private:
-  void InitializeTimeStepAndTimeStepCount(const PhQ::Time& time_step) noexcept {
-    time_step_ = std::max(time_step, PhQ::Time::Zero());
-    if (duration_ > PhQ::Time::Zero() && time_step_ > PhQ::Time::Zero()) {
-      time_step_count_ =
-          static_cast<int32_t>(std::ceil(duration_ / time_step_));
-    }
-    time_step_ = duration_ / std::max(time_step_count_, 1);
-  }
-
   PhQ::Time duration_ = PhQ::Time::Zero();
-
-  PhQ::Time time_step_ = PhQ::Time::Zero();
-
-  int32_t time_step_count_ = 0;
 
   int32_t vehicle_count_ = 0;
 
