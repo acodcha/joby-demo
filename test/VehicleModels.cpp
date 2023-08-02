@@ -30,8 +30,6 @@ namespace Demo {
 
 namespace {
 
-const std::shared_ptr<const VehicleModel> null_model = nullptr;
-
 const std::shared_ptr<const VehicleModel> model123 =
     std::make_shared<const VehicleModel>(
         /*id=*/123,
@@ -80,7 +78,7 @@ TEST(VehicleModels, Size) {
 
 TEST(VehicleModels, Insert) {
   VehicleModels models;
-  EXPECT_FALSE(models.Insert(null_model));
+  EXPECT_FALSE(models.Insert(nullptr));
   EXPECT_TRUE(models.Insert(model123));
   EXPECT_FALSE(models.Insert(model123));
   EXPECT_TRUE(models.Insert(model456));
