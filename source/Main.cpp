@@ -27,13 +27,13 @@
 
 #include "ChargingStations.hpp"
 #include "SampleVehicleModels.hpp"
-#include "SimulationSettings.hpp"
+#include "Settings.hpp"
 #include "Vehicles.hpp"
 
 int main(int argc, char* argv[]) {
   std::cout << "Start of program." << std::endl;
 
-  const Demo::SimulationSettings settings{
+  const Demo::Settings settings{
       /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
       /*vehicle_count=*/20,
       /*charging_station_count=*/3,

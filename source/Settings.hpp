@@ -22,8 +22,8 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#ifndef DEMO_INCLUDE_SIMULATION_SETTINGS_HPP
-#define DEMO_INCLUDE_SIMULATION_SETTINGS_HPP
+#ifndef DEMO_INCLUDE_SETTINGS_HPP
+#define DEMO_INCLUDE_SETTINGS_HPP
 
 #include <optional>
 #include <PhQ/Time.hpp>
@@ -31,17 +31,16 @@
 namespace Demo {
 
 // Settings of a vehicle fleet simulation.
-class SimulationSettings {
+class Settings {
 public:
-  // Constructs simulation settings with all parameters initialized to zero.
-  SimulationSettings() noexcept = default;
+  // Constructs settings with all parameters initialized to zero.
+  Settings() noexcept = default;
 
-  // Constructs simulation settings from the given parameters. Checks the given
-  // parameters for consistency and initializes all members accordingly.
-  SimulationSettings(
-      const PhQ::Time& duration, const int32_t vehicle_count,
-      const int32_t charging_station_count,
-      const std::optional<int64_t>& random_seed = std::nullopt) noexcept
+  // Constructs settings from the given parameters and checks them for
+  // consistency.
+  Settings(const PhQ::Time& duration, const int32_t vehicle_count,
+           const int32_t charging_station_count,
+           const std::optional<int64_t>& random_seed = std::nullopt) noexcept
     : duration_(std::max(duration, PhQ::Time::Zero())),
       vehicle_count_(std::max(vehicle_count, 0)),
       charging_station_count_(std::max(charging_station_count, 0)),
@@ -77,4 +76,4 @@ private:
 
 }  // namespace Demo
 
-#endif  // DEMO_INCLUDE_SIMULATION_SETTINGS_HPP
+#endif  // DEMO_INCLUDE_SETTINGS_HPP
