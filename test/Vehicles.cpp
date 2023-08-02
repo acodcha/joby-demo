@@ -44,13 +44,26 @@ const std::shared_ptr<const VehicleModel> model =
         PhQ::TransportEnergyConsumption(
             2.0, PhQ::Unit::Force::KilowattHourPerMile));
 
-const std::shared_ptr<Vehicle> null_vehicle = nullptr;
-
 const std::shared_ptr<Vehicle> vehicle123 =
     std::make_shared<Vehicle>(123, model);
 
 const std::shared_ptr<Vehicle> vehicle456 =
     std::make_shared<Vehicle>(456, model);
+
+TEST(Vehicles, RandomConstructor) {
+  VehicleModels models;
+  models.Insert(model);
+  std::random_device random_device;
+  std::mt19937_64 random_generator(random_device());
+  random_generator.seed(0);
+  const Vehicles vehicles{4, models, random_generator};
+  EXPECT_EQ(vehicles.Size(), 4);
+  EXPECT_NE(vehicles.At(0), nullptr);
+  EXPECT_NE(vehicles.At(1), nullptr);
+  EXPECT_NE(vehicles.At(2), nullptr);
+  EXPECT_NE(vehicles.At(3), nullptr);
+  EXPECT_EQ(vehicles.At(4), nullptr);
+}
 
 TEST(Vehicles, Empty) {
   const Vehicles empty;
@@ -72,7 +85,7 @@ TEST(Vehicles, Size) {
 
 TEST(Vehicles, Insert) {
   Vehicles vehicles;
-  EXPECT_FALSE(vehicles.Insert(null_vehicle));
+  EXPECT_FALSE(vehicles.Insert(nullptr));
   EXPECT_TRUE(vehicles.Insert(vehicle123));
   EXPECT_FALSE(vehicles.Insert(vehicle123));
   EXPECT_TRUE(vehicles.Insert(vehicle456));
