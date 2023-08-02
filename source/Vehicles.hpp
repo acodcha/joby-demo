@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_VEHICLES_HPP
+#define DEMO_INCLUDE_VEHICLES_HPP
+
 #include <memory>
 #include <random>
 #include <unordered_map>
@@ -121,3 +124,5 @@ private:
 };
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_VEHICLES_HPP

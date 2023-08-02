@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_VEHICLE_MODEL_HPP
+#define DEMO_INCLUDE_VEHICLE_MODEL_HPP
+
 #include <PhQ/Energy.hpp>
 #include <PhQ/Frequency.hpp>
 #include <PhQ/Power.hpp>
@@ -179,3 +182,5 @@ private:
 };
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_VEHICLE_MODEL_HPP
