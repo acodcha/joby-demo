@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_VEHICLE_MODEL_ID_HPP
+#define DEMO_INCLUDE_VEHICLE_MODEL_ID_HPP
+
 #include <cstdint>
 
 namespace Demo {
@@ -32,3 +35,5 @@ namespace Demo {
 using VehicleModelId = int64_t;
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_VEHICLE_MODEL_ID_HPP

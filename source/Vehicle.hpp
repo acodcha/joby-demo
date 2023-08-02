@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_VEHICLE_HPP
+#define DEMO_INCLUDE_VEHICLE_HPP
+
 #include <memory>
 #include <optional>
 #include <random>
@@ -320,3 +323,5 @@ private:
 };
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_VEHICLE_HPP

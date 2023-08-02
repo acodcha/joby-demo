@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_CHARGING_STATIONS_HPP
+#define DEMO_INCLUDE_CHARGING_STATIONS_HPP
+
 #include <limits>
 #include <map>
 #include <memory>
@@ -95,3 +98,5 @@ private:
 };
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_CHARGING_STATIONS_HPP

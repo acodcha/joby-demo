@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_CHARGING_STATION_ID_HPP
+#define DEMO_INCLUDE_CHARGING_STATION_ID_HPP
+
 #include <cstdint>
 
 namespace Demo {
@@ -30,3 +33,5 @@ namespace Demo {
 using ChargingStationId = int64_t;
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_CHARGING_STATION_ID_HPP

@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_SIMULATION_SETTINGS_HPP
+#define DEMO_INCLUDE_SIMULATION_SETTINGS_HPP
+
 #include <optional>
 #include <PhQ/Time.hpp>
 
@@ -86,3 +89,5 @@ private:
 };
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_SIMULATION_SETTINGS_HPP

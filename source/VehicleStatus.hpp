@@ -22,6 +22,9 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
+#ifndef DEMO_INCLUDE_VEHICLE_STATUS_HPP
+#define DEMO_INCLUDE_VEHICLE_STATUS_HPP
+
 #include <cstdint>
 
 namespace Demo {
@@ -35,3 +38,5 @@ enum class VehicleStatus : int8_t {
 };
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_VEHICLE_STATUS_HPP
