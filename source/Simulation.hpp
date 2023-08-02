@@ -25,7 +25,6 @@
 #ifndef DEMO_INCLUDE_SIMULATION_HPP
 #define DEMO_INCLUDE_SIMULATION_HPP
 
-#include <cstdint>
 #include <map>
 #include <random>
 
