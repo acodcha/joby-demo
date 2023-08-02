@@ -61,9 +61,6 @@ public:
   // Current status of this vehicle.
   constexpr const VehicleStatus Status() const noexcept { return status_; }
 
-  // Current remaining energy in the battery of this vehicle.
-  constexpr const PhQ::Energy& Battery() const noexcept { return battery_; }
-
   // Returns the charging station ID at which this vehicle is currently either
   // queued or charging, or std::nullopt if this vehicle is not currently at a
   // charging station.
@@ -71,6 +68,9 @@ public:
   ChargingStationId() const noexcept {
     return charging_station_id_;
   }
+
+  // Current remaining energy in the battery of this vehicle.
+  constexpr const PhQ::Energy& Battery() const noexcept { return battery_; }
 
   // Statistics of this vehicle.
   constexpr const Demo::Statistics& Statistics() const noexcept {
@@ -123,13 +123,54 @@ public:
   PhQ::Time DurationToNextStatusChange() const noexcept {
     switch (status_) {
       case VehicleStatus::OnStandby:
-        return Endurance();
+        if (battery_ > PhQ::Energy::Zero()) {
+          return Endurance();
+        } else {
+          return DurationToFullCharge();
+        }
       case VehicleStatus::WaitingToCharge:
         return DurationToFullCharge();
       case VehicleStatus::Charging:
         return DurationToFullCharge();
       case VehicleStatus::Flying:
         return Endurance();
+    }
+  }
+
+  // Updates the current vehicle's status and related properties. This method
+  // should be called for each vehicle once at the beginning of each time step
+  // of the simulation and once at the end of each time step of the simulation.
+  void Update(ChargingStations& charging_stations) noexcept {
+    switch (status_) {
+      case VehicleStatus::OnStandby:
+        if (battery_ > PhQ::Energy::Zero()) {
+          Takeoff();
+        } else {
+          EnqueueAtChargingStationIfNotAlready(charging_stations);
+          if (CanBeginCharging(charging_stations)) {
+            BeginCharging();
+          }
+        }
+        break;
+      case VehicleStatus::WaitingToCharge:
+        if (CanBeginCharging(charging_stations)) {
+          BeginCharging();
+        }
+        break;
+      case VehicleStatus::Charging:
+        if (battery_ >= model_->BatteryCapacity()) {
+          battery_ = model_->BatteryCapacity();
+          DequeueFromChargingStation(charging_stations);
+          Takeoff();
+        }
+        break;
+      case VehicleStatus::Flying:
+        if (battery_ <= PhQ::Energy::Zero()) {
+          battery_ = PhQ::Energy::Zero();
+          Land();
+          EnqueueAtChargingStationIfNotAlready(charging_stations);
+        }
+        break;
     }
   }
 
@@ -148,7 +189,7 @@ public:
           Takeoff();
           Fly(effective_duration, random_generator);
         } else {
-          EnqueueAtChargingStation(charging_stations);
+          EnqueueAtChargingStationIfNotAlready(charging_stations);
         }
         break;
       case VehicleStatus::WaitingToCharge:
@@ -166,35 +207,6 @@ public:
     }
   }
 
-  // Updates the current vehicle at the end of a time step of the simulation.
-  // For example, if the vehicle was flying but is now at zero battery, it
-  // lands. Or, if the vehicle was charging but is now at full battery, it takes
-  // off. This method should be called once for each vehicle at each time step
-  // of the simulation after each vehicle has completed its Proceed() method.
-  void UpdateAtEndOfTimeStep(ChargingStations& charging_stations) noexcept {
-    switch (status_) {
-      case VehicleStatus::OnStandby:
-        // Remain on standby. No change.
-        break;
-      case VehicleStatus::WaitingToCharge:
-        // Continue waiting. No change.
-        break;
-      case VehicleStatus::Charging:
-        if (battery_ >= model_->BatteryCapacity()) {
-          battery_ = model_->BatteryCapacity();
-          DequeueFromChargingStation(charging_stations);
-          Takeoff();
-        }
-        break;
-      case VehicleStatus::Flying:
-        if (battery_ <= PhQ::Energy::Zero()) {
-          battery_ = PhQ::Energy::Zero();
-          Land();
-        }
-        break;
-    }
-  }
-
 private:
   // This vehicle takes off and begins flying.
   void Takeoff() noexcept {
@@ -205,15 +217,50 @@ private:
   // This vehicle lands.
   void Land() noexcept { status_ = VehicleStatus::OnStandby; }
 
-  // This vehicle enqueues at a charging station.
-  void EnqueueAtChargingStation(ChargingStations& charging_stations) noexcept {
-    const std::shared_ptr<ChargingStation> best_charging_station =
-        charging_stations.LowestCount();
-    if (best_charging_station != nullptr) {
-      best_charging_station->Enqueue(id_);
-      charging_station_id_ = best_charging_station->Id();
-      status_ = VehicleStatus::WaitingToCharge;
+  // This vehicle enqueues at a charging station if it is not already.
+  void EnqueueAtChargingStationIfNotAlready(
+      ChargingStations& charging_stations) noexcept {
+    if (!charging_station_id_.has_value()) {
+      const std::shared_ptr<ChargingStation> best_charging_station =
+          charging_stations.LowestCount();
+      if (best_charging_station != nullptr) {
+        best_charging_station->Enqueue(id_);
+        charging_station_id_ = best_charging_station->Id();
+        status_ = VehicleStatus::WaitingToCharge;
+      }
     }
+  }
+
+  // Returns whether this vehicle can now begin charging at its current charging
+  // station.
+  bool CanBeginCharging(ChargingStations& charging_stations) noexcept {
+    if (charging_station_id_.has_value()) {
+      const std::shared_ptr<ChargingStation> charging_station =
+          charging_stations.At(charging_station_id_.value());
+      const std::optional<VehicleId> front_id = charging_station->Front();
+      if (front_id.has_value() && front_id == id_) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // This vehicle begins charging at its current charging station.
+  void BeginCharging() noexcept {
+    status_ = VehicleStatus::Charging;
+    statistics_.IncrementTotalChargingSessionCount();
+  }
+
+  // This vehicle charges its battery at its current charging station.
+  void Charge(
+      const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
+    status_ = VehicleStatus::Charging;
+    if (model_ == nullptr) {
+      return;
+    }
+    battery_ += model_->ChargingRate() * duration;
+    statistics_.ModifyTotalChargingSessionDuration(duration);
+    RandomlyGenerateFaults(duration, random_generator);
   }
 
   // This vehicle stops charging at its current charging station and dequeues
@@ -244,37 +291,6 @@ private:
     RandomlyGenerateFaults(duration, random_generator);
   }
 
-  // Returns whether this vehicle can now begin charging at its current charging
-  // station.
-  bool CanBeginCharging(ChargingStations& charging_stations) noexcept {
-    if (charging_station_id_.has_value()) {
-      const std::shared_ptr<ChargingStation> charging_station =
-          charging_stations.At(charging_station_id_.value());
-      const std::optional<VehicleId> front_id = charging_station->Front();
-      if (front_id.has_value() && front_id == id_) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // This vehicle begins charging at its current charging station.
-  void BeginCharging() noexcept {
-    statistics_.IncrementTotalChargingSessionCount();
-  }
-
-  // This vehicle charges its battery at its current charging station.
-  void Charge(
-      const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
-    status_ = VehicleStatus::Charging;
-    if (model_ == nullptr) {
-      return;
-    }
-    battery_ += model_->ChargingRate() * duration;
-    statistics_.ModifyTotalChargingSessionDuration(duration);
-    RandomlyGenerateFaults(duration, random_generator);
-  }
-
   // Given a time duration, randomly generates faults during this time according
   // to this vehicle model's mean fault rate using a random Poisson process.
   void RandomlyGenerateFaults(
@@ -296,9 +312,9 @@ private:
 
   VehicleStatus status_ = VehicleStatus::OnStandby;
 
-  PhQ::Energy battery_ = PhQ::Energy::Zero();
-
   std::optional<Demo::ChargingStationId> charging_station_id_;
+
+  PhQ::Energy battery_ = PhQ::Energy::Zero();
 
   Demo::Statistics statistics_;
 };

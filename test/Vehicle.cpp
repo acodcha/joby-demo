@@ -35,8 +35,8 @@ TEST(Vehicle, DefaultConstructor) {
   EXPECT_EQ(vehicle.Id(), 0);
   EXPECT_EQ(vehicle.Model(), nullptr);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
-  EXPECT_EQ(vehicle.Battery(), PhQ::Energy::Zero());
   EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
+  EXPECT_EQ(vehicle.Battery(), PhQ::Energy::Zero());
   EXPECT_EQ(vehicle.Statistics(), Statistics());
   EXPECT_EQ(vehicle.Range(), PhQ::Length::Zero());
   EXPECT_EQ(vehicle.Endurance(), PhQ::Time::Zero());
@@ -66,14 +66,174 @@ TEST(Vehicle, MainConstructor) {
   EXPECT_EQ(vehicle.Id(), id);
   EXPECT_EQ(vehicle.Model(), model);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
+  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
   EXPECT_EQ(
       vehicle.Battery(), PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour));
-  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
   EXPECT_EQ(vehicle.Statistics(), Statistics());
   EXPECT_EQ(vehicle.Range(), model->RangeLimit());
   EXPECT_EQ(vehicle.Endurance(), model->EnduranceLimit());
   EXPECT_EQ(vehicle.DurationToFullCharge(), PhQ::Time::Zero());
   EXPECT_EQ(vehicle.DurationToNextStatusChange(), model->EnduranceLimit());
+}
+
+TEST(Vehicle, TimeStep) {
+  const VehicleId id = 456;
+
+  const std::shared_ptr<const VehicleModel> model =
+      std::make_shared<const VehicleModel>(
+          /*id=*/123,
+          /*manufacturer_name_english=*/"Manufacturer A",
+          /*model_name_english=*/"Model B",
+          /*passenger_count=*/4,
+          /*cruise_speed=*/PhQ::Speed(1.0, PhQ::Unit::Speed::MetrePerSecond),
+          /*battery_capacity=*/PhQ::Energy(2.0, PhQ::Unit::Energy::Joule),
+          /*charging_duration=*/PhQ::Time(1.0, PhQ::Unit::Time::Second),
+          /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
+          /*transport_energy_consumption=*/
+          PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton));
+
+  Vehicle vehicle = {id, model};
+
+  ChargingStations charging_stations;
+  const std::shared_ptr<ChargingStation> charging_station =
+      std::make_shared<ChargingStation>(789);
+  ASSERT_NE(charging_station, nullptr);
+  charging_stations.Insert(charging_station);
+
+  std::random_device random_device;
+  std::mt19937_64 random_generator(random_device());
+  random_generator.seed(0);
+
+  const PhQ::Time step_duration = {1.0, PhQ::Unit::Time::Second};
+
+  // Simulate a first time step.
+
+  vehicle.Update(charging_stations);
+  vehicle.PerformTimeStep(step_duration, charging_stations, random_generator);
+  vehicle.Update(charging_stations);
+
+  EXPECT_EQ(vehicle.Status(), VehicleStatus::Flying);
+  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
+  EXPECT_EQ(vehicle.Battery(), PhQ::Energy(1.0, PhQ::Unit::Energy::Joule));
+  EXPECT_EQ(vehicle.Range(), PhQ::Length(1.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Endurance(), PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(
+      vehicle.DurationToFullCharge(), PhQ::Time(0.5, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.DurationToNextStatusChange(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightCount(), 1);
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDistance(),
+            PhQ::Length(1.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightPassengerDistance(),
+            PhQ::Length(4.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDistance(),
+            PhQ::Length(1.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalChargingSessionCount(), 0);
+  EXPECT_EQ(vehicle.Statistics().TotalChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle.Statistics().MeanChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(charging_station->Count(), 0);
+
+  // Simulate a second time step.
+
+  vehicle.Update(charging_stations);
+  vehicle.PerformTimeStep(step_duration, charging_stations, random_generator);
+  vehicle.Update(charging_stations);
+
+  EXPECT_EQ(vehicle.Status(), VehicleStatus::WaitingToCharge);
+  ASSERT_TRUE(vehicle.ChargingStationId().has_value());
+  EXPECT_EQ(vehicle.ChargingStationId().value(), 789);
+  EXPECT_EQ(vehicle.Battery(), PhQ::Energy::Zero());
+  EXPECT_EQ(vehicle.Range(), PhQ::Length::Zero());
+  EXPECT_EQ(vehicle.Endurance(), PhQ::Time::Zero());
+  EXPECT_EQ(
+      vehicle.DurationToFullCharge(), PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.DurationToNextStatusChange(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightCount(), 1);
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDuration(),
+            PhQ::Time(2.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDistance(),
+            PhQ::Length(2.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightPassengerDistance(),
+            PhQ::Length(8.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDuration(),
+            PhQ::Time(2.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDistance(),
+            PhQ::Length(2.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalChargingSessionCount(), 0);
+  EXPECT_EQ(vehicle.Statistics().TotalChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle.Statistics().MeanChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(charging_station->Count(), 1);
+
+  // Simulate a third time step.
+
+  vehicle.Update(charging_stations);
+  vehicle.PerformTimeStep(step_duration, charging_stations, random_generator);
+  vehicle.Update(charging_stations);
+
+  EXPECT_EQ(vehicle.Status(), VehicleStatus::Flying);
+  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
+  EXPECT_EQ(vehicle.Battery(), PhQ::Energy(2.0, PhQ::Unit::Energy::Joule));
+  EXPECT_EQ(vehicle.Range(), PhQ::Length(2.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Endurance(), PhQ::Time(2.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(
+      vehicle.DurationToFullCharge(), PhQ::Time(0.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.DurationToNextStatusChange(),
+            PhQ::Time(2.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightCount(), 2);
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDuration(),
+            PhQ::Time(2.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDistance(),
+            PhQ::Length(2.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightPassengerDistance(),
+            PhQ::Length(8.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDistance(),
+            PhQ::Length(1.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalChargingSessionCount(), 1);
+  EXPECT_EQ(vehicle.Statistics().TotalChargingDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().MeanChargingDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(charging_station->Count(), 0);
+
+  // Simulate a fourth time step.
+
+  vehicle.Update(charging_stations);
+  vehicle.PerformTimeStep(step_duration, charging_stations, random_generator);
+  vehicle.Update(charging_stations);
+
+  EXPECT_EQ(vehicle.Status(), VehicleStatus::Flying);
+  EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
+  EXPECT_EQ(vehicle.Battery(), PhQ::Energy(1.0, PhQ::Unit::Energy::Joule));
+  EXPECT_EQ(vehicle.Range(), PhQ::Length(1.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Endurance(), PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(
+      vehicle.DurationToFullCharge(), PhQ::Time(0.5, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.DurationToNextStatusChange(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightCount(), 2);
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDuration(),
+            PhQ::Time(3.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightDistance(),
+            PhQ::Length(3.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalFlightPassengerDistance(),
+            PhQ::Length(12.0, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDuration(),
+            PhQ::Time(1.5, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().MeanFlightDistance(),
+            PhQ::Length(1.5, PhQ::Unit::Length::Metre));
+  EXPECT_EQ(vehicle.Statistics().TotalChargingSessionCount(), 1);
+  EXPECT_EQ(vehicle.Statistics().TotalChargingDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(vehicle.Statistics().MeanChargingDuration(),
+            PhQ::Time(1.0, PhQ::Unit::Time::Second));
+  EXPECT_EQ(charging_station->Count(), 0);
 }
 
 }  // namespace
