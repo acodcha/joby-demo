@@ -22,7 +22,7 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include "../source/SimulationSettings.hpp"
+#include "../source/Settings.hpp"
 
 #include <gtest/gtest.h>
 
@@ -30,16 +30,16 @@ namespace Demo {
 
 namespace {
 
-TEST(SimulationSettings, DefaultConstructor) {
-  const SimulationSettings settings;
+TEST(Settings, DefaultConstructor) {
+  const Settings settings;
   EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
   EXPECT_EQ(settings.VehicleCount(), 0);
   EXPECT_EQ(settings.ChargingStationCount(), 0);
   EXPECT_EQ(settings.RandomSeed(), std::nullopt);
 }
 
-TEST(SimulationSettings, MainConstructor) {
-  const SimulationSettings settings{
+TEST(Settings, MainConstructor) {
+  const Settings settings{
       /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
       /*vehicle_count=*/20,
       /*charging_station_count=*/3,
@@ -51,8 +51,8 @@ TEST(SimulationSettings, MainConstructor) {
   EXPECT_EQ(settings.RandomSeed(), 42);
 }
 
-TEST(SimulationSettings, NegativeValues) {
-  const SimulationSettings settings{
+TEST(Settings, NegativeValues) {
+  const Settings settings{
       /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
       /*vehicle_count=*/-20,
       /*charging_station_count=*/-3,
