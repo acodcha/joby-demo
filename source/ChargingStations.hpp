@@ -36,8 +36,17 @@ namespace Demo {
 // Collection of charging stations.
 class ChargingStations {
 public:
-  // Default constructor. Initializes an empty collection of charging stations.
+  // Constructs an empty collection of charging stations.
   ChargingStations() noexcept = default;
+
+  // Constructs a collection containing a given number of charging stations.
+  ChargingStations(const int32_t count) noexcept {
+    ChargingStationId id = 0;
+    for (int32_t index = 0; index < count; ++index) {
+      Insert(std::make_shared<ChargingStation>(id));
+      ++id;
+    }
+  }
 
   // Returns whether the collection is empty.
   bool Empty() const noexcept { return data_.empty(); }

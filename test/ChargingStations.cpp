@@ -30,6 +30,15 @@ namespace Demo {
 
 namespace {
 
+TEST(ChargingStations, Constructor) {
+  const ChargingStations charging_stations{3};
+  EXPECT_EQ(charging_stations.Size(), 3);
+  EXPECT_NE(charging_stations.At(0), nullptr);
+  EXPECT_NE(charging_stations.At(1), nullptr);
+  EXPECT_NE(charging_stations.At(2), nullptr);
+  EXPECT_EQ(charging_stations.At(3), nullptr);
+}
+
 TEST(ChargingStations, Empty) {
   const ChargingStations charging_stations_a;
   EXPECT_TRUE(charging_stations_a.Empty());
