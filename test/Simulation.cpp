@@ -55,8 +55,8 @@ TEST(Simulation, Simple) {
   std::mt19937_64 random_generator(random_device());
   random_generator.seed(0);
 
-  Simulation simulation;
-  simulation.Run(duration, vehicles, charging_stations, random_generator);
+  const Simulation simulation{
+      duration, vehicles, charging_stations, random_generator};
 }
 
 }  // namespace

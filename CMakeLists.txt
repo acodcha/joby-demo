@@ -69,6 +69,10 @@ enable_testing()
 
 # Define tests.
 
+add_executable(test-aggregate-statistics ${PROJECT_SOURCE_DIR}/test/AggregateStatistics.cpp)
+target_link_libraries(test-aggregate-statistics PhQ GTest::gtest_main)
+gtest_discover_tests(test-aggregate-statistics)
+
 add_executable(test-charging-station ${PROJECT_SOURCE_DIR}/test/ChargingStation.cpp)
 target_link_libraries(test-charging-station PhQ GTest::gtest_main)
 gtest_discover_tests(test-charging-station)

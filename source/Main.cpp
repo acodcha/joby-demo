@@ -25,6 +25,7 @@
 #include <iostream>
 #include <random>
 
+#include "AggregateStatistics.hpp"
 #include "ChargingStations.hpp"
 #include "SampleVehicleModels.hpp"
 #include "Settings.hpp"
@@ -51,9 +52,10 @@ int main(int argc, char* argv[]) {
 
   Demo::ChargingStations charging_stations{settings.ChargingStationCount()};
 
-  Demo::Simulation simulation;
-  simulation.Run(
-      settings.Duration(), vehicles, charging_stations, random_generator);
+  const Demo::Simulation simulation{
+      settings.Duration(), vehicles, charging_stations, random_generator};
+
+  const Demo::AggregateStatistics aggregate_statistics{vehicles};
 
   std::cout << "End of program." << std::endl;
 
