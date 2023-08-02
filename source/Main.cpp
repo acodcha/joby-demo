@@ -24,8 +24,28 @@
 
 #include <iostream>
 
+#include "SampleVehicleModels.hpp"
+#include "SimulationSettings.hpp"
+#include "Vehicles.hpp"
+
 int main(int argc, char* argv[]) {
-  std::cout << "Hello world!" << std::endl;
+  std::cout << "Start of program." << std::endl;
+
+  const Demo::SimulationSettings settings{
+      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
+      /*vehicle_count=*/20,
+      /*charging_station_count=*/3,
+  };
+
+  const Demo::VehicleModels vehicle_models =
+      Demo::GenerateSampleVehicleModels();
+
+  std::random_device random_device;
+  std::mt19937_64 random_generator(random_device());
+
+  Demo::Vehicles vehicles{20, vehicle_models, random_generator};
+
+  std::cout << "End of program." << std::endl;
 
   return EXIT_SUCCESS;
 }
