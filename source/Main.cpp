@@ -27,6 +27,7 @@
 
 #include "AggregateStatistics.hpp"
 #include "ChargingStations.hpp"
+#include "ResultsFileWriter.hpp"
 #include "SampleVehicleModels.hpp"
 #include "Settings.hpp"
 #include "Simulation.hpp"
@@ -39,6 +40,7 @@ int main(int argc, char* argv[]) {
       /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
       /*vehicle_count=*/20,
       /*charging_station_count=*/3,
+      /*results=*/"results.dat",
   };
 
   const Demo::VehicleModels vehicle_models =
@@ -56,6 +58,9 @@ int main(int argc, char* argv[]) {
       settings.Duration(), vehicles, charging_stations, random_generator};
 
   const Demo::AggregateStatistics aggregate_statistics{vehicles};
+
+  const Demo::ResultsFileWriter results_file_writer{
+      settings.Results(), vehicle_models, aggregate_statistics};
 
   std::cout << "End of program." << std::endl;
 

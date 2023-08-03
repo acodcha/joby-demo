@@ -22,48 +22,44 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include "../source/Settings.hpp"
+#ifndef DEMO_INCLUDE_FILE_HPP
+#define DEMO_INCLUDE_FILE_HPP
 
-#include <gtest/gtest.h>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
 namespace Demo {
 
-namespace {
+// General-purpose file handler.
+template<class FileStream> class File {
+public:
+  // Destructor. Closes the file if needed.
+  ~File() noexcept {
+    if (stream_.is_open()) {
+      stream_.close();
+    }
+  }
 
-TEST(Settings, DefaultConstructor) {
-  const Settings settings;
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-  EXPECT_EQ(settings.RandomSeed(), std::nullopt);
-}
+  // Path to this file.
+  const std::filesystem::path& Path() const noexcept { return path_; }
 
-TEST(Settings, MainConstructor) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/20,
-      /*charging_station_count=*/3,
-      /*results=*/"results.dat",
-      /*random_seed=*/42,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time(3.0, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(settings.VehicleCount(), 20);
-  EXPECT_EQ(settings.ChargingStationCount(), 3);
-  EXPECT_EQ(settings.Results(), "results.dat");
-  EXPECT_EQ(settings.RandomSeed(), 42);
-}
+protected:
+  std::filesystem::path path_;
 
-TEST(Settings, NegativeValues) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/-20,
-      /*charging_station_count=*/-3,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-}
+  FileStream stream_;
 
-}  // namespace
+  // Creates and opens a file at the given path.
+  File(const std::filesystem::path& path) : path_(path) {
+    if (!path_.empty()) {
+      stream_.open(path_.string());
+      if (!stream_.is_open()) {
+        std::cerr << "Could not open the file: " << path_.string() << std::endl;
+      }
+    }
+  }
+};
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_FILE_HPP

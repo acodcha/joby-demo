@@ -22,48 +22,39 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include "../source/Settings.hpp"
+#ifndef DEMO_INCLUDE_TEXT_FILE_WRITER_HPP
+#define DEMO_INCLUDE_TEXT_FILE_WRITER_HPP
 
-#include <gtest/gtest.h>
+#include <string_view>
+
+#include "FileWriter.hpp"
 
 namespace Demo {
 
-namespace {
+// General-purpose plain text file writer.
+class TextFileWriter : public FileWriter {
+protected:
+  // Creates and opens a file for writing text at the given path and with the
+  // given permissions.
+  TextFileWriter(const std::filesystem::path& path,
+                 const std::filesystem::perms& permissions =
+                     {std::filesystem::perms::owner_read
+                      | std::filesystem::perms::owner_write
+                      | std::filesystem::perms::group_read
+                      | std::filesystem::perms::others_read})
+    : FileWriter(path, permissions) {}
 
-TEST(Settings, DefaultConstructor) {
-  const Settings settings;
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-  EXPECT_EQ(settings.RandomSeed(), std::nullopt);
-}
+  // Prints a line in this file.
+  void Line(const std::string_view text) noexcept {
+    if (stream_.is_open()) {
+      stream_ << text << std::endl;
+    }
+  }
 
-TEST(Settings, MainConstructor) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/20,
-      /*charging_station_count=*/3,
-      /*results=*/"results.dat",
-      /*random_seed=*/42,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time(3.0, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(settings.VehicleCount(), 20);
-  EXPECT_EQ(settings.ChargingStationCount(), 3);
-  EXPECT_EQ(settings.Results(), "results.dat");
-  EXPECT_EQ(settings.RandomSeed(), 42);
-}
-
-TEST(Settings, NegativeValues) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/-20,
-      /*charging_station_count=*/-3,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-}
-
-}  // namespace
+  // Prints a blank line in this file.
+  void BlankLine() noexcept { Line(""); }
+};
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_TEXT_FILE_WRITER_HPP

@@ -81,6 +81,10 @@ add_executable(test-charging-stations ${PROJECT_SOURCE_DIR}/test/ChargingStation
 target_link_libraries(test-charging-stations PhQ GTest::gtest_main)
 gtest_discover_tests(test-charging-stations)
 
+add_executable(test-results-file-writer ${PROJECT_SOURCE_DIR}/test/ResultsFileWriter.cpp)
+target_link_libraries(test-results-file-writer PhQ GTest::gtest_main)
+gtest_discover_tests(test-results-file-writer)
+
 add_executable(test-settings ${PROJECT_SOURCE_DIR}/test/Settings.cpp)
 target_link_libraries(test-settings PhQ GTest::gtest_main)
 gtest_discover_tests(test-settings)
@@ -92,6 +96,10 @@ gtest_discover_tests(test-simulation)
 add_executable(test-statistics ${PROJECT_SOURCE_DIR}/test/Statistics.cpp)
 target_link_libraries(test-statistics PhQ GTest::gtest_main)
 gtest_discover_tests(test-statistics)
+
+add_executable(test-string ${PROJECT_SOURCE_DIR}/test/String.cpp)
+target_link_libraries(test-string PhQ GTest::gtest_main)
+gtest_discover_tests(test-string)
 
 add_executable(test-vehicle ${PROJECT_SOURCE_DIR}/test/Vehicle.cpp)
 target_link_libraries(test-vehicle PhQ GTest::gtest_main)

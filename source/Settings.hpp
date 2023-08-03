@@ -25,6 +25,7 @@
 #ifndef DEMO_INCLUDE_SETTINGS_HPP
 #define DEMO_INCLUDE_SETTINGS_HPP
 
+#include <filesystem>
 #include <optional>
 #include <PhQ/Time.hpp>
 
@@ -40,11 +41,12 @@ public:
   // consistency.
   Settings(const PhQ::Time& duration, const int32_t vehicle_count,
            const int32_t charging_station_count,
+           const std::filesystem::path& results = {},
            const std::optional<int64_t>& random_seed = std::nullopt) noexcept
     : duration_(std::max(duration, PhQ::Time::Zero())),
       vehicle_count_(std::max(vehicle_count, 0)),
       charging_station_count_(std::max(charging_station_count, 0)),
-      random_seed_(random_seed) {}
+      results_(results), random_seed_(random_seed) {}
 
   // Time duration of the simulation.
   constexpr const PhQ::Time& Duration() const noexcept { return duration_; }
@@ -56,6 +58,8 @@ public:
   constexpr int32_t ChargingStationCount() const noexcept {
     return charging_station_count_;
   }
+
+  const std::filesystem::path& Results() const noexcept { return results_; }
 
   // Random seed used to generate pseudo-random numbers in the simulation, or
   // std::nullopt, in which case random numbers generated in the simulation are
@@ -70,6 +74,8 @@ private:
   int32_t vehicle_count_ = 0;
 
   int32_t charging_station_count_ = 0;
+
+  std::filesystem::path results_;
 
   std::optional<int64_t> random_seed_;
 };
