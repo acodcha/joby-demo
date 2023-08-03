@@ -22,43 +22,27 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include <iostream>
-#include <random>
+#ifndef DEMO_INCLUDE_PROGRAM_HPP
+#define DEMO_INCLUDE_PROGRAM_HPP
 
-#include "AggregateStatistics.hpp"
-#include "ChargingStations.hpp"
-#include "ResultsFileWriter.hpp"
-#include "SampleVehicleModels.hpp"
-#include "Settings.hpp"
-#include "Simulation.hpp"
-#include "Vehicles.hpp"
+#include <string>
 
-int main(int argc, char* argv[]) {
-  const Demo::Settings settings{argc, argv};
+namespace Demo {
 
-  const Demo::VehicleModels vehicle_models =
-      Demo::GenerateSampleVehicleModels();
+// Namespace containing information about this program and its compilation.
+namespace Program {
 
-  std::random_device random_device;
-  std::mt19937_64 random_generator(random_device());
-  if (settings.RandomSeed().has_value()) {
-    random_generator.seed(settings.RandomSeed().value());
-  }
+static const std::string Title{"Joby Demo"};
 
-  Demo::Vehicles vehicles{
-      settings.Vehicles(), vehicle_models, random_generator};
+static const std::string CompilationDateAndTime{
+    std::string{__DATE__} + ", " + std::string{__TIME__}};
 
-  Demo::ChargingStations charging_stations{settings.ChargingStations()};
+static const std::string Description{
+    "Simple demonstration of C++ principles in the context of a vehicle fleet "
+    "simulation."};
 
-  const Demo::Simulation simulation{
-      settings.Duration(), vehicles, charging_stations, random_generator};
+}  // namespace Program
 
-  const Demo::AggregateStatistics aggregate_statistics{vehicles};
+}  // namespace Demo
 
-  const Demo::ResultsFileWriter results_file_writer{
-      settings.Results(), vehicle_models, aggregate_statistics};
-
-  std::cout << "End of program." << std::endl;
-
-  return EXIT_SUCCESS;
-}
+#endif  // DEMO_INCLUDE_PROGRAM_HPP

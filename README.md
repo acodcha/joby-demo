@@ -24,10 +24,30 @@ make --jobs=16
 
 This builds the `build/bin/joby-demo` main executable and the testing executables.
 
-Run the main executable from the `build` directory with:
+Print usage information to the console by running the main executable from the `build` directory with:
 
 ```bash
-bin/joby-demo
+bin/joby-demo --help
+```
+
+Run a simulation by running the main executable from the `build` directory with:
+
+```bash
+bin/joby-demo --vehicles <number> --charging-stations <number> --duration-hours <number> [--results <path>] [--random-seed <number>]
+```
+
+The command-line arguments are:
+
+- `--vehicles <number>`: Number of vehicles in the simulation. Required.
+- `--charging-stations <number>`: Number of charging stations in the simulation. Required.
+- `--duration-hours <number>`: Time duration of the simulation in hours. Required.
+- `--results <path>`: Path to the results file to be written. Optional. If omitted, simulation results are not written.
+- `--random-seed <number>`: Seed value for pseudo-random number generation. Optional. If omitted, the seed value is randomized.
+
+For example, the following command runs a 3-hour simulation containing 20 vehicles and 3 charging stations and writes results to `results.dat`:
+
+```bash
+bin/joby-demo --vehicles 20 --charging-stations 3 --duration-hours 3.0 --results results.dat
 ```
 
 You can also optionally run this project's tests from the `build` directory with:
