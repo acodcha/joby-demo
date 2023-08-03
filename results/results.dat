@@ -1,0 +1,6 @@
+#Manufacturer    Model          MeanFlightDuration  MeanFlightDistance  MeanChargingDuration  TotalFlightPassengerDistance  TotalFaults
+Alpha_Company    Alpha_Model    1.146667 hr         137.6000 mi         0.5222222 hr          2752.000 mi                   0          
+Bravo_Company    Bravo_Model    0.6666667 hr        66.66667 mi         0.2000000 hr          3333.333 mi                   0          
+Charlie_Company  Charlie_Model  0.6250000 hr        100.00000 mi        0.8000000 hr          2400.000 mi                   0          
+Delta_Company    Delta_Model    1.666667 hr         150.0000 mi         0.3666667 hr          1500.000 mi                   1          
+Echo_Company     Echo_Model     0.7795019 hr        23.38506 mi         0.3000000 hr          280.6207 mi                   6          
