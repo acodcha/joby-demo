@@ -22,43 +22,41 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include <iostream>
-#include <random>
+#ifndef DEMO_INCLUDE_ARGUMENTS_HPP
+#define DEMO_INCLUDE_ARGUMENTS_HPP
 
-#include "AggregateStatistics.hpp"
-#include "ChargingStations.hpp"
-#include "ResultsFileWriter.hpp"
-#include "SampleVehicleModels.hpp"
-#include "Settings.hpp"
-#include "Simulation.hpp"
-#include "Vehicles.hpp"
+#include <string>
 
-int main(int argc, char* argv[]) {
-  const Demo::Settings settings{argc, argv};
+namespace Demo {
 
-  const Demo::VehicleModels vehicle_models =
-      Demo::GenerateSampleVehicleModels();
+// Namespace listing this program's command-line argument keywords.
+namespace Arguments {
 
-  std::random_device random_device;
-  std::mt19937_64 random_generator(random_device());
-  if (settings.RandomSeed().has_value()) {
-    random_generator.seed(settings.RandomSeed().value());
-  }
+static const std::string Help{"--help"};
 
-  Demo::Vehicles vehicles{
-      settings.Vehicles(), vehicle_models, random_generator};
+static const std::string VehiclesKey{"--vehicles"};
 
-  Demo::ChargingStations charging_stations{settings.ChargingStations()};
+static const std::string VehiclesPattern{VehiclesKey + " <number>"};
 
-  const Demo::Simulation simulation{
-      settings.Duration(), vehicles, charging_stations, random_generator};
+static const std::string ChargingStationsKey{"--charging-stations"};
 
-  const Demo::AggregateStatistics aggregate_statistics{vehicles};
+static const std::string ChargingStationsPattern{
+    ChargingStationsKey + " <number>"};
 
-  const Demo::ResultsFileWriter results_file_writer{
-      settings.Results(), vehicle_models, aggregate_statistics};
+static const std::string DurationKey{"--duration-hours"};
 
-  std::cout << "End of program." << std::endl;
+static const std::string DurationPattern{DurationKey + " <number>"};
 
-  return EXIT_SUCCESS;
-}
+static const std::string ResultsKey{"--results"};
+
+static const std::string ResultsPattern{ResultsKey + " <path>"};
+
+static const std::string RandomSeedKey{"--seed"};
+
+static const std::string RandomSeedPattern{RandomSeedKey + " <number>"};
+
+}  // namespace Arguments
+
+}  // namespace Demo
+
+#endif  // DEMO_INCLUDE_ARGUMENTS_HPP

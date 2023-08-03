@@ -25,9 +25,16 @@
 #ifndef DEMO_INCLUDE_SETTINGS_HPP
 #define DEMO_INCLUDE_SETTINGS_HPP
 
+#include <cstdlib>
 #include <filesystem>
 #include <optional>
 #include <PhQ/Time.hpp>
+#include <string>
+#include <vector>
+
+#include "Arguments.hpp"
+#include "Program.hpp"
+#include "String.hpp"
 
 namespace Demo {
 
@@ -37,27 +44,34 @@ public:
   // Constructs settings with all parameters initialized to zero.
   Settings() noexcept = default;
 
+  // Constructs settings from command-line arguments.
+  Settings(const int argc, char* argv[]) noexcept : executable_name_(argv[0]) {
+    ParseArguments(argc, argv);
+    MessageHeaderInformation();
+    MessageCommand();
+    MessageStartInformation();
+  }
+
   // Constructs settings from the given parameters and checks them for
   // consistency.
-  Settings(const PhQ::Time& duration, const int32_t vehicle_count,
-           const int32_t charging_station_count,
-           const std::filesystem::path& results = {},
+  Settings(const int32_t vehicles, const int32_t charging_stations,
+           const PhQ::Time& duration, const std::filesystem::path& results = {},
            const std::optional<int64_t>& random_seed = std::nullopt) noexcept
-    : duration_(std::max(duration, PhQ::Time::Zero())),
-      vehicle_count_(std::max(vehicle_count, 0)),
-      charging_station_count_(std::max(charging_station_count, 0)),
-      results_(results), random_seed_(random_seed) {}
+    : vehicles_(std::max(vehicles, 0)),
+      charging_stations_(std::max(charging_stations, 0)),
+      duration_(std::max(duration, PhQ::Time::Zero())), results_(results),
+      random_seed_(random_seed) {}
+
+  // Number of vehicles in the simulation.
+  constexpr int32_t Vehicles() const noexcept { return vehicles_; }
+
+  // Number of charging stations in the simulation.
+  constexpr int32_t ChargingStations() const noexcept {
+    return charging_stations_;
+  }
 
   // Time duration of the simulation.
   constexpr const PhQ::Time& Duration() const noexcept { return duration_; }
-
-  // Number of vehicles in the simulation.
-  constexpr int32_t VehicleCount() const noexcept { return vehicle_count_; }
-
-  // Number of charging stations in the simulation.
-  constexpr int32_t ChargingStationCount() const noexcept {
-    return charging_station_count_;
-  }
 
   const std::filesystem::path& Results() const noexcept { return results_; }
 
@@ -69,11 +83,162 @@ public:
   }
 
 private:
+  // Prints the program header information to the console.
+  void MessageHeaderInformation() const noexcept {
+    std::cout << Program::Title << std::endl;
+    std::cout << Program::Description << std::endl;
+    std::cout << "Version: " << Program::CompilationDateAndTime << std::endl;
+  }
+
+  // Prints the program usage information to the console.
+  void MessageUsageInformation() const noexcept {
+    const std::string indent{"  "};
+
+    std::cout << "Usage:" << std::endl;
+
+    std::cout << indent << executable_name_ << " " << Arguments::VehiclesPattern
+              << " " << Arguments::ChargingStationsPattern << " "
+              << Arguments::DurationPattern << " [" << Arguments::ResultsPattern
+              << "] [" << Arguments::RandomSeedPattern << "]" << std::endl;
+
+    // Compute the padding length of the argument patterns.
+    const std::size_t length{std::max({
+        Arguments::Help.length(),
+        Arguments::VehiclesPattern.length(),
+        Arguments::ChargingStationsPattern.length(),
+        Arguments::DurationPattern.length(),
+        Arguments::ResultsPattern.length(),
+        Arguments::RandomSeedPattern.length(),
+    })};
+
+    std::cout << "Arguments:" << std::endl;
+
+    std::cout << indent << PadToLength(Arguments::Help, length) << indent
+              << "Displays this information and exits." << std::endl;
+
+    std::cout
+        << indent << PadToLength(Arguments::VehiclesPattern, length) << indent
+        << "Number of vehicles in the simulation. Required." << std::endl;
+
+    std::cout
+        << indent << PadToLength(Arguments::ChargingStationsPattern, length)
+        << indent << "Number of charging stations in the simulation. Required."
+        << std::endl;
+
+    std::cout
+        << indent << PadToLength(Arguments::DurationPattern, length) << indent
+        << "Time duration of the simulation in hours. Required." << std::endl;
+
+    std::cout
+        << indent << PadToLength(Arguments::ResultsPattern, length) << indent
+        << "Path to the results file to be written. Optional." << std::endl;
+
+    std::cout
+        << indent << PadToLength(Arguments::RandomSeedPattern, length) << indent
+        << "Seed value for pseudo-random number generation. Optional."
+        << std::endl;
+  }
+
+  // Parses the command-line arguments.
+  void ParseArguments(const int argc, char* argv[]) noexcept {
+    if (argc <= 1) {
+      MessageHeaderInformation();
+      MessageUsageInformation();
+      exit(EXIT_SUCCESS);
+    }
+
+    // Iterate over the command-line arguments. Skip the first argument because
+    // it is the name of the executable.
+    for (int index = 1; index < argc; ++index) {
+      if (argv[index] == Arguments::Help) {
+        MessageHeaderInformation();
+        MessageUsageInformation();
+        exit(EXIT_SUCCESS);
+      } else if (argv[index] == Arguments::VehiclesKey
+                 && AtLeastOneMoreArgument(index, argc)) {
+        vehicles_ = std::max(std::atoi(argv[index + 1]), 0);
+        ++index;
+      } else if (argv[index] == Arguments::ChargingStationsKey
+                 && AtLeastOneMoreArgument(index, argc)) {
+        charging_stations_ = std::max(std::atoi(argv[index + 1]), 0);
+        ++index;
+      } else if (argv[index] == Arguments::DurationKey
+                 && AtLeastOneMoreArgument(index, argc)) {
+        duration_ = {
+            std::max(std::atof(argv[index + 1]), 0.0), PhQ::Unit::Time::Hour};
+        ++index;
+      } else if (argv[index] == Arguments::ResultsKey
+                 && AtLeastOneMoreArgument(index, argc)) {
+        results_ = argv[index + 1];
+        ++index;
+      } else if (argv[index] == Arguments::RandomSeedKey
+                 && AtLeastOneMoreArgument(index, argc)) {
+        random_seed_ = std::atoi(argv[index + 1]);
+        ++index;
+      } else {
+        MessageHeaderInformation();
+        std::cout << "Unrecognized argument: " << argv[index] << std::endl;
+        MessageUsageInformation();
+        exit(EXIT_FAILURE);
+      }
+    }
+  }
+
+  // Returns whether there is at least one more argument after the given
+  // argument index.
+  bool AtLeastOneMoreArgument(
+      const int index, const int argument_count) const noexcept {
+    return index + 1 < argument_count;
+  }
+
+  // Prints the command to the console.
+  void MessageCommand() const noexcept {
+    std::cout
+        << "Command: " << executable_name_ << " " << Arguments::VehiclesKey
+        << " " << vehicles_ << " " << Arguments::ChargingStationsKey << " "
+        << charging_stations_ << " " << Arguments::DurationKey << " "
+        << duration_.Value(PhQ::Unit::Time::Hour)
+        << (results_.empty() ?
+                " " + Arguments::ResultsKey + " " + results_.string() :
+                "")
+        << (random_seed_.has_value() ?
+                " " + Arguments::RandomSeedKey + " "
+                    + std::to_string(random_seed_.value()) :
+                "")
+        << std::endl;
+  }
+
+  void MessageStartInformation() const noexcept {
+    std::cout << "- The number of vehicles in the simulation is: " << vehicles_
+              << std::endl;
+    std::cout << "- The number of charging stations in the simulation is: "
+              << charging_stations_ << std::endl;
+    std::cout << "- The time duration of the simulation is: "
+              << duration_.Print(PhQ::Unit::Time::Hour) << std::endl;
+    if (results_.empty()) {
+      std::cout << "- The simulation results will not be written to a file."
+                << std::endl;
+    } else {
+      std::cout << "- The simulation results will be written to: " << results_
+                << std::endl;
+    }
+    if (random_seed_.has_value()) {
+      std::cout << "- The seed value for pseudo-random number generation is : "
+                << random_seed_.value() << std::endl;
+    } else {
+      std::cout << "- The seed value for random number generation will be "
+                   "randomized."
+                << std::endl;
+    }
+  }
+
+  std::string executable_name_;
+
+  int32_t vehicles_ = 0;
+
+  int32_t charging_stations_ = 0;
+
   PhQ::Time duration_ = PhQ::Time::Zero();
-
-  int32_t vehicle_count_ = 0;
-
-  int32_t charging_station_count_ = 0;
 
   std::filesystem::path results_;
 

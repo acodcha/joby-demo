@@ -33,35 +33,35 @@ namespace {
 TEST(Settings, DefaultConstructor) {
   const Settings settings;
   EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
+  EXPECT_EQ(settings.Vehicles(), 0);
+  EXPECT_EQ(settings.ChargingStations(), 0);
   EXPECT_EQ(settings.RandomSeed(), std::nullopt);
 }
 
 TEST(Settings, MainConstructor) {
   const Settings settings{
+      /*vehicles=*/20,
+      /*charging_stations=*/3,
       /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/20,
-      /*charging_station_count=*/3,
       /*results=*/"results.dat",
       /*random_seed=*/42,
   };
+  EXPECT_EQ(settings.Vehicles(), 20);
+  EXPECT_EQ(settings.ChargingStations(), 3);
   EXPECT_EQ(settings.Duration(), PhQ::Time(3.0, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(settings.VehicleCount(), 20);
-  EXPECT_EQ(settings.ChargingStationCount(), 3);
   EXPECT_EQ(settings.Results(), "results.dat");
   EXPECT_EQ(settings.RandomSeed(), 42);
 }
 
 TEST(Settings, NegativeValues) {
   const Settings settings{
+      /*vehicles=*/-20,
+      /*charging_stations=*/-3,
       /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/-20,
-      /*charging_station_count=*/-3,
   };
   EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
+  EXPECT_EQ(settings.Vehicles(), 0);
+  EXPECT_EQ(settings.ChargingStations(), 0);
 }
 
 }  // namespace
