@@ -22,48 +22,45 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include "../source/Settings.hpp"
+#ifndef DEMO_INCLUDE_FILE_WRITER_HPP
+#define DEMO_INCLUDE_FILE_WRITER_HPP
 
-#include <gtest/gtest.h>
+#include "File.hpp"
 
 namespace Demo {
 
-namespace {
+// General-purpose file writer.
+class FileWriter : public File<std::ofstream> {
+public:
+  // Destructor. Sets the permissions for this file before closing it.
+  ~FileWriter() noexcept { SetPermissions(); }
 
-TEST(Settings, DefaultConstructor) {
-  const Settings settings;
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-  EXPECT_EQ(settings.RandomSeed(), std::nullopt);
-}
+  // Permissions of this file.
+  const std::filesystem::perms& Permissions() const noexcept {
+    return permissions_;
+  }
 
-TEST(Settings, MainConstructor) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/20,
-      /*charging_station_count=*/3,
-      /*results=*/"results.dat",
-      /*random_seed=*/42,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time(3.0, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(settings.VehicleCount(), 20);
-  EXPECT_EQ(settings.ChargingStationCount(), 3);
-  EXPECT_EQ(settings.Results(), "results.dat");
-  EXPECT_EQ(settings.RandomSeed(), 42);
-}
+protected:
+  // Creates and opens a file for writing at the given path and with the given
+  // permissions.
+  FileWriter(const std::filesystem::path& path,
+             const std::filesystem::perms& permissions =
+                 {std::filesystem::perms::owner_read
+                  | std::filesystem::perms::owner_write
+                  | std::filesystem::perms::group_read
+                  | std::filesystem::perms::others_read})
+    : File(path), permissions_(permissions) {}
 
-TEST(Settings, NegativeValues) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/-20,
-      /*charging_station_count=*/-3,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-}
+  std::filesystem::perms permissions_;
 
-}  // namespace
+  // Sets the permissions of this file.
+  void SetPermissions() noexcept {
+    if (!path_.empty() && std::filesystem::exists(path_)) {
+      std::filesystem::permissions(path_, permissions_);
+    }
+  }
+};
 
 }  // namespace Demo
+
+#endif  // DEMO_INCLUDE_FILE_WRITER_HPP

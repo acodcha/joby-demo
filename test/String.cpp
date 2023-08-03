@@ -22,7 +22,7 @@
 // This file was originally obtained from:
 //     https://github.com/acodcha/joby-demo
 
-#include "../source/Settings.hpp"
+#include "../source/String.hpp"
 
 #include <gtest/gtest.h>
 
@@ -30,38 +30,23 @@ namespace Demo {
 
 namespace {
 
-TEST(Settings, DefaultConstructor) {
-  const Settings settings;
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
-  EXPECT_EQ(settings.RandomSeed(), std::nullopt);
+TEST(String, PadToLength) {
+  EXPECT_EQ(PadToLength("", 0), "");
+  EXPECT_EQ(PadToLength("", 10), "          ");
+  EXPECT_EQ(PadToLength("Hello world!", 0), "Hello world!");
+  EXPECT_EQ(PadToLength("Hello world!", 15), "Hello world!   ");
 }
 
-TEST(Settings, MainConstructor) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/20,
-      /*charging_station_count=*/3,
-      /*results=*/"results.dat",
-      /*random_seed=*/42,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time(3.0, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(settings.VehicleCount(), 20);
-  EXPECT_EQ(settings.ChargingStationCount(), 3);
-  EXPECT_EQ(settings.Results(), "results.dat");
-  EXPECT_EQ(settings.RandomSeed(), 42);
+TEST(String, ReplaceCharacter) {
+  EXPECT_EQ(ReplaceCharacter("", 'a', 'b'), "");
+  EXPECT_EQ(ReplaceCharacter("Hello world!", 'l', 'L'), "HeLLo worLd!");
 }
 
-TEST(Settings, NegativeValues) {
-  const Settings settings{
-      /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
-      /*vehicle_count=*/-20,
-      /*charging_station_count=*/-3,
-  };
-  EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
-  EXPECT_EQ(settings.VehicleCount(), 0);
-  EXPECT_EQ(settings.ChargingStationCount(), 0);
+TEST(String, ReplaceSpacesWithUnderscores) {
+  EXPECT_EQ(ReplaceSpacesWithUnderscores(""), "");
+  EXPECT_EQ(ReplaceSpacesWithUnderscores("Hello world!"), "Hello_world!");
+  EXPECT_EQ(ReplaceSpacesWithUnderscores("H e l l o   w o r l d !"),
+            "H_e_l_l_o___w_o_r_l_d_!");
 }
 
 }  // namespace
