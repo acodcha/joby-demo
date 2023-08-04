@@ -41,10 +41,10 @@ public:
   VehicleModels() noexcept = default;
 
   // Returns whether the collection is empty.
-  bool Empty() const noexcept { return data_.empty(); }
+  bool Empty() const noexcept { return vehicle_models_.empty(); }
 
   // Returns the number of vehicle models in the collection.
-  std::size_t Size() const noexcept { return data_.size(); }
+  std::size_t Size() const noexcept { return vehicle_models_.size(); }
 
   // Attempts to insert a new vehicle model into the collection. Returns true if
   // the new vehicle model was successfully inserted, or false otherwise.
@@ -52,11 +52,15 @@ public:
     if (model == nullptr) {
       return false;
     }
+
     const std::pair<std::map<VehicleModelId, std::size_t>::const_iterator, bool>
-        result = ids_to_indices_.emplace(model->Id(), data_.size());
+        result = vehicle_model_ids_to_indices_.emplace(
+            model->Id(), vehicle_models_.size());
+
     if (result.second) {
-      data_.push_back(model);
+      vehicle_models_.push_back(model);
     }
+
     return result.second;
   }
 
@@ -65,10 +69,12 @@ public:
   std::shared_ptr<const VehicleModel> At(
       const VehicleModelId id) const noexcept {
     const std::map<VehicleModelId, std::size_t>::const_iterator id_and_index =
-        ids_to_indices_.find(id);
-    if (id_and_index != ids_to_indices_.cend()) {
-      return data_[id_and_index->second];
+        vehicle_model_ids_to_indices_.find(id);
+
+    if (id_and_index != vehicle_model_ids_to_indices_.cend()) {
+      return vehicle_models_[id_and_index->second];
     }
+
     return nullptr;
   }
 
@@ -79,8 +85,11 @@ public:
     if (Empty()) {
       return nullptr;
     }
-    std::uniform_int_distribution<std::size_t> distribution(0, Size() - 1);
-    return data_[distribution(random_generator)];
+
+    std::uniform_int_distribution<std::size_t> random_distribution(
+        0, Size() - 1);
+
+    return vehicle_models_[random_distribution(random_generator)];
   }
 
   struct const_iterator
@@ -92,25 +101,29 @@ public:
   };
 
   const_iterator begin() const noexcept {
-    return const_iterator(data_.begin());
+    return const_iterator(vehicle_models_.begin());
   }
 
   const_iterator cbegin() const noexcept {
-    return const_iterator(data_.cbegin());
+    return const_iterator(vehicle_models_.cbegin());
   }
 
-  const_iterator end() const noexcept { return const_iterator(data_.end()); }
+  const_iterator end() const noexcept {
+    return const_iterator(vehicle_models_.end());
+  }
 
-  const_iterator cend() const noexcept { return const_iterator(data_.cend()); }
+  const_iterator cend() const noexcept {
+    return const_iterator(vehicle_models_.cend());
+  }
 
 private:
-  std::vector<std::shared_ptr<const VehicleModel>> data_;
+  std::vector<std::shared_ptr<const VehicleModel>> vehicle_models_;
 
   // Map of vehicle model IDs to the index of the corresponding vehicle model in
   // the vector. This implementation assumes that only a small number of vehicle
   // models are used, say 20 or fewer. If more vehicle models are used, this
   // implementation should instead use a hash map rather than a binary tree map.
-  std::map<VehicleModelId, std::size_t> ids_to_indices_;
+  std::map<VehicleModelId, std::size_t> vehicle_model_ids_to_indices_;
 };
 
 }  // namespace Demo

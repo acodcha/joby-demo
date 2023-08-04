@@ -33,23 +33,23 @@ namespace {
 TEST(ChargingStation, Id) {
   const ChargingStation station0;
   EXPECT_EQ(station0.Id(), 0);
-  const ChargingStation station789{789};
-  EXPECT_EQ(station789.Id(), 789);
+  const ChargingStation station333{333};
+  EXPECT_EQ(station333.Id(), 333);
 }
 
 TEST(ChargingStation, Empty) {
   ChargingStation station;
   EXPECT_TRUE(station.Empty());
-  station.Enqueue(123);
+  station.Enqueue(111);
   EXPECT_FALSE(station.Empty());
 }
 
 TEST(ChargingStation, Count) {
   ChargingStation station;
   EXPECT_EQ(station.Count(), 0);
-  station.Enqueue(123);
+  station.Enqueue(111);
   EXPECT_EQ(station.Count(), 1);
-  station.Enqueue(456);
+  station.Enqueue(222);
   EXPECT_EQ(station.Count(), 2);
   station.Dequeue();
   EXPECT_EQ(station.Count(), 1);
@@ -59,39 +59,39 @@ TEST(ChargingStation, Count) {
 
 TEST(ChargingStation, Exists) {
   ChargingStation station;
-  station.Enqueue(123);
-  station.Enqueue(456);
-  EXPECT_TRUE(station.Exists(123));
-  EXPECT_TRUE(station.Exists(456));
-  EXPECT_FALSE(station.Exists(789));
+  station.Enqueue(111);
+  station.Enqueue(222);
+  EXPECT_TRUE(station.Exists(111));
+  EXPECT_TRUE(station.Exists(222));
+  EXPECT_FALSE(station.Exists(333));
 }
 
 TEST(ChargingStation, Front) {
   ChargingStation station;
   EXPECT_EQ(station.Front(), std::nullopt);
-  station.Enqueue(123);
-  EXPECT_EQ(station.Front(), 123);
-  station.Enqueue(456);
-  EXPECT_EQ(station.Front(), 123);
+  station.Enqueue(111);
+  EXPECT_EQ(station.Front(), 111);
+  station.Enqueue(222);
+  EXPECT_EQ(station.Front(), 111);
   station.Dequeue();
-  EXPECT_EQ(station.Front(), 456);
+  EXPECT_EQ(station.Front(), 222);
   station.Dequeue();
   EXPECT_EQ(station.Front(), std::nullopt);
 }
 
 TEST(ChargingStation, Enqueue) {
   ChargingStation station;
-  EXPECT_TRUE(station.Enqueue(123));
-  EXPECT_FALSE(station.Enqueue(123));
-  EXPECT_TRUE(station.Enqueue(456));
-  EXPECT_FALSE(station.Enqueue(456));
+  EXPECT_TRUE(station.Enqueue(111));
+  EXPECT_FALSE(station.Enqueue(111));
+  EXPECT_TRUE(station.Enqueue(222));
+  EXPECT_FALSE(station.Enqueue(222));
 }
 
 TEST(ChargingStation, Dequeue) {
   ChargingStation station;
   EXPECT_FALSE(station.Dequeue());
-  station.Enqueue(123);
-  station.Enqueue(456);
+  station.Enqueue(111);
+  station.Enqueue(222);
   EXPECT_TRUE(station.Dequeue());
   EXPECT_TRUE(station.Dequeue());
   EXPECT_FALSE(station.Dequeue());

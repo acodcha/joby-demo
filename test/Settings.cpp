@@ -30,35 +30,84 @@ namespace Demo {
 
 namespace {
 
-TEST(Settings, DefaultConstructor) {
+TEST(Settings, Default) {
   const Settings settings;
   EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
   EXPECT_EQ(settings.Vehicles(), 0);
   EXPECT_EQ(settings.ChargingStations(), 0);
-  EXPECT_EQ(settings.RandomSeed(), std::nullopt);
+  EXPECT_EQ(settings.Seed(), std::nullopt);
 }
 
-TEST(Settings, MainConstructor) {
-  const Settings settings{
-      /*vehicles=*/20,
-      /*charging_stations=*/3,
-      /*duration=*/PhQ::Time(3.0, PhQ::Unit::Time::Hour),
-      /*results=*/"results.dat",
-      /*random_seed=*/42,
+TEST(Settings, Regular) {
+  char program[] = "bin/joby-demo";
+
+  char vehicles_key[] = "--vehicles";
+  char vehicles_value[] = "20";
+
+  char charging_stations_key[] = "--charging-stations";
+  char charging_stations_value[] = "3";
+
+  char duration_key[] = "--duration-hours";
+  char duration_value[] = "3.0";
+
+  char results_key[] = "--results";
+  char results_value[] = "results.dat";
+
+  char seed_key[] = "--seed";
+  char seed_value[] = "42";
+
+  int argc = 11;
+
+  char* argv[] = {
+      program,
+      vehicles_key,
+      vehicles_value,
+      charging_stations_key,
+      charging_stations_value,
+      duration_key,
+      duration_value,
+      results_key,
+      results_value,
+      seed_key,
+      seed_value,
   };
+
+  const Settings settings{argc, argv};
+
   EXPECT_EQ(settings.Vehicles(), 20);
   EXPECT_EQ(settings.ChargingStations(), 3);
   EXPECT_EQ(settings.Duration(), PhQ::Time(3.0, PhQ::Unit::Time::Hour));
   EXPECT_EQ(settings.Results(), "results.dat");
-  EXPECT_EQ(settings.RandomSeed(), 42);
+  EXPECT_TRUE(settings.Seed().has_value());
+  EXPECT_EQ(settings.Seed().value(), 42);
 }
 
-TEST(Settings, NegativeValues) {
-  const Settings settings{
-      /*vehicles=*/-20,
-      /*charging_stations=*/-3,
-      /*duration=*/PhQ::Time(-3.0, PhQ::Unit::Time::Hour),
+TEST(Settings, Bogus) {
+  char program[] = "bin/joby-demo";
+
+  char vehicles_key[] = "--vehicles";
+  char vehicles_value[] = "-20";
+
+  char charging_stations_key[] = "--charging-stations";
+  char charging_stations_value[] = "-3";
+
+  char duration_key[] = "--duration-hours";
+  char duration_value[] = "-3.0";
+
+  int argc = 7;
+
+  char* argv[] = {
+      program,
+      vehicles_key,
+      vehicles_value,
+      charging_stations_key,
+      charging_stations_value,
+      duration_key,
+      duration_value,
   };
+
+  const Settings settings{argc, argv};
+
   EXPECT_EQ(settings.Duration(), PhQ::Time::Zero());
   EXPECT_EQ(settings.Vehicles(), 0);
   EXPECT_EQ(settings.ChargingStations(), 0);

@@ -25,6 +25,7 @@
 #ifndef DEMO_INCLUDE_AGGREGATE_STATISTICS_HPP
 #define DEMO_INCLUDE_AGGREGATE_STATISTICS_HPP
 
+#include <iostream>
 #include <map>
 
 #include "Statistics.hpp"
@@ -48,6 +49,7 @@ public:
         const std::pair<std::map<VehicleModelId, Statistics>::iterator, bool>
             result = vehicle_model_ids_to_statistics_.emplace(
                 vehicle->Model()->Id(), vehicle->Statistics());
+
         if (!result.second) {
           // In this case, this vehicle model is already in the map, so
           // aggregate its existing statistics with this individual vehicle's
@@ -56,6 +58,8 @@ public:
         }
       }
     }
+
+    std::cout << "Computed the aggregate statistics." << std::endl;
   }
 
   // Returns whether the collection is empty.
@@ -74,10 +78,12 @@ public:
     const std::map<VehicleModelId, Statistics>::const_iterator
         vehicle_model_id_and_statistics =
             vehicle_model_ids_to_statistics_.find(id);
+
     if (vehicle_model_id_and_statistics
         != vehicle_model_ids_to_statistics_.cend()) {
       return vehicle_model_id_and_statistics->second;
     }
+
     return std::nullopt;
   }
 

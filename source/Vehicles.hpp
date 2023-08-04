@@ -25,6 +25,8 @@
 #ifndef DEMO_INCLUDE_VEHICLES_HPP
 #define DEMO_INCLUDE_VEHICLES_HPP
 
+#include <iostream>
+#include <map>
 #include <memory>
 #include <random>
 #include <unordered_map>
@@ -43,24 +45,37 @@ public:
 
   // Constructs a collection of vehicles by randomly generating a given number
   // of vehicles from a collection of available vehicle models.
-  Vehicles(const int32_t count, const VehicleModels& models,
+  Vehicles(const int32_t count, const VehicleModels& vehicle_models,
            std::mt19937_64& random_generator) noexcept {
     VehicleId id = 0;
+
     for (int32_t vehicle_index = 0; vehicle_index < count; ++vehicle_index) {
-      const std::shared_ptr<const VehicleModel> model =
-          models.Random(random_generator);
-      if (model != nullptr) {
-        Insert(std::make_shared<Vehicle>(id, model));
+      const std::shared_ptr<const VehicleModel> vehicle_model =
+          vehicle_models.Random(random_generator);
+
+      if (vehicle_model != nullptr) {
+        const std::pair<std::map<VehicleModelId, std::size_t>::iterator, bool>
+            result =
+                vehicle_model_ids_to_counts_.emplace(vehicle_model->Id(), 1);
+
+        if (!result.second) {
+          ++result.first->second;
+        }
+
+        Insert(std::make_shared<Vehicle>(id, vehicle_model));
+
         ++id;
       }
     }
+
+    PrintVehicleModelCounts(vehicle_models);
   }
 
   // Returns whether the collection is empty.
-  bool Empty() const noexcept { return data_.empty(); }
+  bool Empty() const noexcept { return vehicles_.empty(); }
 
   // Returns the number of vehicles in the collection.
-  std::size_t Size() const noexcept { return data_.size(); }
+  std::size_t Size() const noexcept { return vehicles_.size(); }
 
   // Attempts to insert a new vehicle into the collection. Returns true if the
   // new vehicle was successfully inserted, or false otherwise.
@@ -68,28 +83,34 @@ public:
     if (vehicle == nullptr) {
       return false;
     }
+
     const std::pair<std::unordered_map<VehicleId, std::size_t>::const_iterator,
                     bool>
-        result = ids_to_indices_.emplace(vehicle->Id(), data_.size());
+        result =
+            vehicle_ids_to_indices_.emplace(vehicle->Id(), vehicles_.size());
+
     if (result.second) {
-      data_.push_back(vehicle);
+      vehicles_.push_back(vehicle);
     }
+
     return result.second;
   }
 
   // Returns whether a given vehicle ID exists in this collection.
   bool Exists(const VehicleId id) const noexcept {
-    return ids_to_indices_.find(id) != ids_to_indices_.cend();
+    return vehicle_ids_to_indices_.find(id) != vehicle_ids_to_indices_.cend();
   }
 
   // Returns the vehicle corresponding to a given vehicle ID, or nullptr if that
   // vehicle ID is not found in this collection.
   std::shared_ptr<Vehicle> At(const VehicleId id) const noexcept {
     const std::unordered_map<VehicleId, std::size_t>::const_iterator
-        id_and_index = ids_to_indices_.find(id);
-    if (id_and_index != ids_to_indices_.cend()) {
-      return data_[id_and_index->second];
+        id_and_index = vehicle_ids_to_indices_.find(id);
+
+    if (id_and_index != vehicle_ids_to_indices_.cend()) {
+      return vehicles_[id_and_index->second];
     }
+
     return nullptr;
   }
 
@@ -100,8 +121,10 @@ public:
     if (Empty()) {
       return nullptr;
     }
+
     std::uniform_int_distribution<> distribution(0, Size() - 1);
-    return data_[distribution(random_generator)];
+
+    return vehicles_[distribution(random_generator)];
   }
 
   struct iterator : public std::vector<std::shared_ptr<Vehicle>>::iterator {
@@ -109,9 +132,9 @@ public:
       : std::vector<std::shared_ptr<Vehicle>>::iterator(i) {}
   };
 
-  iterator begin() noexcept { return iterator(data_.begin()); }
+  iterator begin() noexcept { return iterator(vehicles_.begin()); }
 
-  iterator end() noexcept { return iterator(data_.end()); }
+  iterator end() noexcept { return iterator(vehicles_.end()); }
 
   struct const_iterator
     : public std::vector<std::shared_ptr<Vehicle>>::const_iterator {
@@ -121,22 +144,53 @@ public:
   };
 
   const_iterator begin() const noexcept {
-    return const_iterator(data_.begin());
+    return const_iterator(vehicles_.begin());
   }
 
   const_iterator cbegin() const noexcept {
-    return const_iterator(data_.cbegin());
+    return const_iterator(vehicles_.cbegin());
   }
 
-  const_iterator end() const noexcept { return const_iterator(data_.end()); }
+  const_iterator end() const noexcept {
+    return const_iterator(vehicles_.end());
+  }
 
-  const_iterator cend() const noexcept { return const_iterator(data_.cend()); }
+  const_iterator cend() const noexcept {
+    return const_iterator(vehicles_.cend());
+  }
 
 private:
-  std::vector<std::shared_ptr<Vehicle>> data_;
+  // Prints the number of vehicles of each vehicle model to the console.
+  void PrintVehicleModelCounts(
+      const VehicleModels& vehicle_models) const noexcept {
+    if (vehicle_model_ids_to_counts_.empty()) {
+      return;
+    }
+
+    std::cout << "Vehicle models in this simulation:" << std::endl;
+
+    for (const std::pair<const VehicleModelId, std::size_t>&
+             vehicle_model_id_and_count : vehicle_model_ids_to_counts_) {
+      const std::shared_ptr<const VehicleModel> vehicle_model =
+          vehicle_models.At(vehicle_model_id_and_count.first);
+
+      if (vehicle_model != nullptr) {
+        std::cout
+            << "- " << vehicle_model->ManufacturerNameEnglish() << ", "
+            << vehicle_model->ModelNameEnglish() << ": "
+            << vehicle_model_id_and_count.second << " vehicles" << std::endl;
+      }
+    }
+  }
+
+  // Map of vehicle model IDs to the count of vehicles of that model.
+  std::map<VehicleModelId, std::size_t> vehicle_model_ids_to_counts_;
+
+  // Vehicles in this simulation.
+  std::vector<std::shared_ptr<Vehicle>> vehicles_;
 
   // Map of vehicle IDs to the index of the corresponding vehicle in the vector.
-  std::unordered_map<VehicleId, std::size_t> ids_to_indices_;
+  std::unordered_map<VehicleId, std::size_t> vehicle_ids_to_indices_;
 };
 
 }  // namespace Demo

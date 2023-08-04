@@ -35,25 +35,20 @@ namespace Arguments {
 static const std::string Help{"--help"};
 
 static const std::string VehiclesKey{"--vehicles"};
-
 static const std::string VehiclesPattern{VehiclesKey + " <number>"};
 
 static const std::string ChargingStationsKey{"--charging-stations"};
-
 static const std::string ChargingStationsPattern{
     ChargingStationsKey + " <number>"};
 
 static const std::string DurationKey{"--duration-hours"};
-
 static const std::string DurationPattern{DurationKey + " <number>"};
 
 static const std::string ResultsKey{"--results"};
-
 static const std::string ResultsPattern{ResultsKey + " <path>"};
 
-static const std::string RandomSeedKey{"--seed"};
-
-static const std::string RandomSeedPattern{RandomSeedKey + " <number>"};
+static const std::string SeedKey{"--seed"};
+static const std::string SeedPattern{SeedKey + " <number>"};
 
 }  // namespace Arguments
 

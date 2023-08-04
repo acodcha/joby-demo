@@ -69,10 +69,12 @@ public:
     if (charging_duration_ > PhQ::Time::Zero()) {
       charging_rate_ = battery_capacity_ / charging_duration_;
     }
+
     if (transport_energy_consumption_
         > PhQ::TransportEnergyConsumption::Zero()) {
       range_limit_ = battery_capacity_ / transport_energy_consumption_;
     }
+
     if (cruise_speed_ > PhQ::Speed::Zero()) {
       endurance_limit_ = range_limit_ / cruise_speed_;
     }

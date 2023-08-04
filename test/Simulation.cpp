@@ -30,12 +30,12 @@ namespace Demo {
 
 namespace {
 
-TEST(Simulation, Simple) {
+TEST(Simulation, Regular) {
   const PhQ::Time duration{5.0, PhQ::Unit::Time::Second};
 
   const std::shared_ptr<const VehicleModel> vehicle_model =
       std::make_shared<const VehicleModel>(
-          /*id=*/123,
+          /*id=*/111,
           /*manufacturer_name_english=*/"Manufacturer A",
           /*model_name_english=*/"Model B",
           /*passenger_count=*/4,
@@ -47,9 +47,9 @@ TEST(Simulation, Simple) {
           PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton));
 
   Vehicles vehicles;
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/456, vehicle_model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/222, vehicle_model));
 
-  ChargingStations charging_stations{/*count=*/1};
+  ChargingStations charging_stations{1};
 
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());

@@ -69,6 +69,7 @@ public:
     if (queue_.empty()) {
       return std::nullopt;
     }
+
     return queue_.front();
   }
 
@@ -82,6 +83,7 @@ public:
       queue_.push(id);
       return true;
     }
+
     return false;
   }
 
@@ -93,8 +95,11 @@ public:
     if (queue_.empty()) {
       return false;
     }
+
     ids_.erase(queue_.front());
+
     queue_.pop();
+
     return true;
   }
 

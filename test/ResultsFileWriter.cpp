@@ -32,12 +32,15 @@ namespace {
 
 TEST(ResultsFileWriter, Empty) {
   ResultsFileWriter results_file_writer{{}, {}, {}};
+
   EXPECT_EQ(results_file_writer.Path(), std::filesystem::path());
+
   EXPECT_EQ(results_file_writer.Permissions(),
             std::filesystem::perms{std::filesystem::perms::owner_read
                                    | std::filesystem::perms::owner_write
                                    | std::filesystem::perms::group_read
                                    | std::filesystem::perms::others_read});
+
   std::ifstream file;
   file.open("");
   EXPECT_FALSE(file.is_open());
@@ -47,6 +50,7 @@ TEST(ResultsFileWriter, Simple) {
   const std::filesystem::path path{"results.dat"};
 
   VehicleModels vehicle_models;
+
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/111,
       /*manufacturer_name_english=*/"Manufacturer A",
@@ -58,6 +62,7 @@ TEST(ResultsFileWriter, Simple) {
       /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton)));
+
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/222,
       /*manufacturer_name_english=*/"Manufacturer B",
@@ -78,6 +83,7 @@ TEST(ResultsFileWriter, Simple) {
 
   ResultsFileWriter results_file_writer{
       path, vehicle_models, aggregate_statistics};
+
   EXPECT_EQ(results_file_writer.Path(), path);
   EXPECT_EQ(results_file_writer.Permissions(),
             std::filesystem::perms{std::filesystem::perms::owner_read

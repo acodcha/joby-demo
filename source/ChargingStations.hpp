@@ -42,6 +42,7 @@ public:
   // Constructs a collection containing a given number of charging stations.
   ChargingStations(const int32_t count) noexcept {
     ChargingStationId id = 0;
+
     for (int32_t index = 0; index < count; ++index) {
       Insert(std::make_shared<ChargingStation>(id));
       ++id;
@@ -61,10 +62,12 @@ public:
     if (charging_station == nullptr) {
       return false;
     }
+
     const std::pair<std::map<ChargingStationId,
                              std::shared_ptr<ChargingStation>>::const_iterator,
                     bool>
         result = data_.emplace(charging_station->Id(), charging_station);
+
     return result.second;
   }
 
@@ -75,9 +78,11 @@ public:
     const std::map<ChargingStationId,
                    std::shared_ptr<ChargingStation>>::const_iterator
         id_and_data = data_.find(id);
+
     if (id_and_data != data_.cend()) {
       return id_and_data->second;
     }
+
     return nullptr;
   }
 
@@ -87,7 +92,9 @@ public:
   // returns the first one encountered while traversing the collection.
   std::shared_ptr<ChargingStation> LowestCount() const noexcept {
     std::shared_ptr<ChargingStation> best = nullptr;
+
     std::size_t lowest_count = std::numeric_limits<std::size_t>::max();
+
     for (const std::pair<const ChargingStationId,
                          std::shared_ptr<ChargingStation>>& element : data_) {
       if (element.second->Count() < lowest_count) {
@@ -95,6 +102,7 @@ public:
         lowest_count = element.second->Count();
       }
     }
+
     return best;
   }
 

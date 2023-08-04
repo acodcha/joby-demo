@@ -31,98 +31,110 @@ namespace Demo {
 namespace {
 
 TEST(VehicleModel, DefaultConstructor) {
-  const VehicleModel model;
-  EXPECT_EQ(model.Id(), 0);
-  EXPECT_EQ(model.ManufacturerNameEnglish(), "");
-  EXPECT_EQ(model.ModelNameEnglish(), "");
-  EXPECT_EQ(model.PassengerCount(), 0);
-  EXPECT_EQ(model.CruiseSpeed(), PhQ::Speed::Zero());
-  EXPECT_EQ(model.BatteryCapacity(), PhQ::Energy::Zero());
-  EXPECT_EQ(model.ChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(model.MeanFaultRate(), PhQ::Frequency::Zero());
-  EXPECT_EQ(model.TransportEnergyConsumption(),
+  const VehicleModel vehicle_model;
+  EXPECT_EQ(vehicle_model.Id(), 0);
+  EXPECT_EQ(vehicle_model.ManufacturerNameEnglish(), "");
+  EXPECT_EQ(vehicle_model.ModelNameEnglish(), "");
+  EXPECT_EQ(vehicle_model.PassengerCount(), 0);
+  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed::Zero());
+  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy::Zero());
+  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency::Zero());
+  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
             PhQ::TransportEnergyConsumption::Zero());
-  EXPECT_EQ(model.TransportPowerUsage(), PhQ::Power::Zero());
-  EXPECT_EQ(model.ChargingRate(), PhQ::Power::Zero());
-  EXPECT_EQ(model.RangeLimit(), PhQ::Length::Zero());
-  EXPECT_EQ(model.EnduranceLimit(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle_model.TransportPowerUsage(), PhQ::Power::Zero());
+  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Power::Zero());
+  EXPECT_EQ(vehicle_model.RangeLimit(), PhQ::Length::Zero());
+  EXPECT_EQ(vehicle_model.EnduranceLimit(), PhQ::Time::Zero());
 }
 
 TEST(VehicleModel, MainConstructor) {
-  const VehicleModel model{
-      /*id=*/123,
+  const VehicleModel vehicle_model{
+      /*id=*/111,
       /*manufacturer_name_english=*/"Manufacturer A",
-      /*model_name_english=*/"Model B",
+      /*model_name_english=*/"Model A",
       /*passenger_count=*/4,
-      /*cruise_speed=*/PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-      /*battery_capacity=*/PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-      /*charging_duration=*/PhQ::Time(0.8, PhQ::Unit::Time::Hour),
-      /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
+      /*cruise_speed=*/PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour),
+      /*battery_capacity=*/PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour),
+      /*charging_duration=*/PhQ::Time(0.6, PhQ::Unit::Time::Hour),
+      /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          2.0, PhQ::Unit::Force::KilowattHourPerMile),
-  };
-  EXPECT_EQ(model.Id(), 123);
-  EXPECT_EQ(model.ManufacturerNameEnglish(), "Manufacturer A");
-  EXPECT_EQ(model.ModelNameEnglish(), "Model B");
-  EXPECT_EQ(model.PassengerCount(), 4);
-  EXPECT_EQ(
-      model.CruiseSpeed(), PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour));
-  EXPECT_EQ(model.BatteryCapacity(),
-            PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour));
+          1.6, PhQ::Unit::Force::KilowattHourPerMile)};
 
-  EXPECT_EQ(model.ChargingDuration(), PhQ::Time(0.8, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(model.MeanFaultRate(),
-            PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour));
-  EXPECT_EQ(model.TransportEnergyConsumption(),
+  EXPECT_EQ(vehicle_model.Id(), 111);
+
+  EXPECT_EQ(vehicle_model.ManufacturerNameEnglish(), "Manufacturer A");
+
+  EXPECT_EQ(vehicle_model.ModelNameEnglish(), "Model A");
+
+  EXPECT_EQ(vehicle_model.PassengerCount(), 4);
+
+  EXPECT_EQ(vehicle_model.CruiseSpeed(),
+            PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
+
+  EXPECT_EQ(vehicle_model.BatteryCapacity(),
+            PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour));
+
+  EXPECT_EQ(
+      vehicle_model.ChargingDuration(), PhQ::Time(0.6, PhQ::Unit::Time::Hour));
+
+  EXPECT_EQ(vehicle_model.MeanFaultRate(),
+            PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour));
+
+  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
             PhQ::TransportEnergyConsumption(
-                2.0, PhQ::Unit::Force::KilowattHourPerMile));
-  EXPECT_EQ(model.TransportPowerUsage(),
-            PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour)
+                1.6, PhQ::Unit::Force::KilowattHourPerMile));
+
+  EXPECT_EQ(vehicle_model.TransportPowerUsage(),
+            PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour)
                 * PhQ::TransportEnergyConsumption(
-                    2.0, PhQ::Unit::Force::KilowattHourPerMile));
-  EXPECT_EQ(model.ChargingRate(),
-            PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour)
-                / PhQ::Time(0.8, PhQ::Unit::Time::Hour));
-  EXPECT_EQ(model.RangeLimit(),
-            PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour)
+                    1.6, PhQ::Unit::Force::KilowattHourPerMile));
+
+  EXPECT_EQ(vehicle_model.ChargingRate(),
+            PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
+                / PhQ::Time(0.6, PhQ::Unit::Time::Hour));
+
+  EXPECT_EQ(vehicle_model.RangeLimit(),
+            PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
                 / PhQ::TransportEnergyConsumption(
-                    2.0, PhQ::Unit::Force::KilowattHourPerMile));
-  EXPECT_EQ(model.EnduranceLimit(),
-            (PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour)
+                    1.6, PhQ::Unit::Force::KilowattHourPerMile));
+
+  EXPECT_EQ(vehicle_model.EnduranceLimit(),
+            (PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
              / PhQ::TransportEnergyConsumption(
-                 2.0, PhQ::Unit::Force::KilowattHourPerMile))
-                / PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour));
+                 1.6, PhQ::Unit::Force::KilowattHourPerMile))
+                / PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
 }
 
 TEST(VehicleModel, NegativeValues) {
-  const VehicleModel model{
-      /*id=*/123,
+  const VehicleModel vehicle_model{
+      /*id=*/111,
       /*manufacturer_name_english=*/"Manufacturer A",
-      /*model_name_english=*/"Model B",
+      /*model_name_english=*/"Model A",
       /*passenger_count=*/-4,
-      /*cruise_speed=*/PhQ::Speed(-100.0, PhQ::Unit::Speed::MilePerHour),
-      /*battery_capacity=*/PhQ::Energy(-200.0, PhQ::Unit::Energy::KilowattHour),
-      /*charging_duration=*/PhQ::Time(-0.8, PhQ::Unit::Time::Hour),
-      /*fault_rate=*/PhQ::Frequency(-0.1, PhQ::Unit::Frequency::PerHour),
+      /*cruise_speed=*/PhQ::Speed(-120.0, PhQ::Unit::Speed::MilePerHour),
+      /*battery_capacity=*/PhQ::Energy(-320.0, PhQ::Unit::Energy::KilowattHour),
+      /*charging_duration=*/PhQ::Time(-0.6, PhQ::Unit::Time::Hour),
+      /*fault_rate=*/PhQ::Frequency(-0.25, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          -2.0, PhQ::Unit::Force::KilowattHourPerMile),
-  };
-  EXPECT_EQ(model.Id(), 123);
-  EXPECT_EQ(model.ManufacturerNameEnglish(), "Manufacturer A");
-  EXPECT_EQ(model.ModelNameEnglish(), "Model B");
-  EXPECT_EQ(model.PassengerCount(), 0);
-  EXPECT_EQ(model.CruiseSpeed(), PhQ::Speed::Zero());
-  EXPECT_EQ(model.BatteryCapacity(), PhQ::Energy::Zero());
-  EXPECT_EQ(model.ChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(model.MeanFaultRate(), PhQ::Frequency::Zero());
-  EXPECT_EQ(model.TransportEnergyConsumption(),
+          -1.6, PhQ::Unit::Force::KilowattHourPerMile)};
+
+  EXPECT_EQ(vehicle_model.Id(), 111);
+  EXPECT_EQ(vehicle_model.ManufacturerNameEnglish(), "Manufacturer A");
+  EXPECT_EQ(vehicle_model.ModelNameEnglish(), "Model A");
+  EXPECT_EQ(vehicle_model.PassengerCount(), 0);
+  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed::Zero());
+  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy::Zero());
+  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency::Zero());
+  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
             PhQ::TransportEnergyConsumption::Zero());
-  EXPECT_EQ(model.TransportPowerUsage(), PhQ::Power::Zero());
-  EXPECT_EQ(model.ChargingRate(), PhQ::Power::Zero());
-  EXPECT_EQ(model.RangeLimit(), PhQ::Length::Zero());
-  EXPECT_EQ(model.EnduranceLimit(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle_model.TransportPowerUsage(), PhQ::Power::Zero());
+  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Power::Zero());
+  EXPECT_EQ(vehicle_model.RangeLimit(), PhQ::Length::Zero());
+  EXPECT_EQ(vehicle_model.EnduranceLimit(), PhQ::Time::Zero());
 }
 
 }  // namespace
