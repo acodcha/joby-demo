@@ -106,7 +106,7 @@ private:
   // vehicles.
   PhQ::Time ComputeTimeStep(
       const PhQ::Time& duration, const Vehicles& vehicles) const noexcept {
-    PhQ::Time time_step = duration;
+    PhQ::Time time_step = duration - elapsed_time_;
 
     for (const std::shared_ptr<Vehicle>& vehicle : vehicles) {
       if (vehicle != nullptr) {
