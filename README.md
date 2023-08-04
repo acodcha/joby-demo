@@ -4,6 +4,12 @@
 
 Simple demonstration of C++ principles in the context of a vehicle fleet simulation.
 
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Results](#results)
+- [Testing](#testing)
+- [License](#license)
+
 ## Configuration
 
 The following packages are required:
@@ -24,7 +30,7 @@ cmake ..
 make --jobs=16
 ```
 
-This builds the `build/bin/joby-demo` main executable and the testing executables.
+This builds the `build/bin/joby-demo` executable and the tests.
 
 ## Usage
 
@@ -48,28 +54,30 @@ The command-line arguments are:
 - `--results <path>`: Path to the results file to be written. Optional. If omitted, simulation results are not written.
 - `--random-seed <number>`: Seed value for pseudo-random number generation. Optional. If omitted, the seed value is randomized.
 
-For example, the following command runs a 3-hour simulation containing 20 vehicles and 3 charging stations and writes results to `results.dat`:
+## Results
+
+The following command runs a simulation that contains 20 vehicles, features 3 charging stations, lasts 3.0 hours, writes to `results.dat`, and uses a random seed value:
 
 ```bash
 bin/joby-demo --vehicles 20 --charging-stations 3 --duration-hours 3.0 --results results.dat
 ```
 
-## Results
+A sample console log and results file from such a run are located in the `results` directory:
 
-A sample console log and results file are located in the `results` directory:
+- [results/results.dat](results/results.dat)
+- [results/log.txt](results/log.txt)
 
-- [results.dat](results/results.dat)
-- [log.txt](results/log.txt)
+Note that rerunning this command produces different results each time due to the random seed value.
 
 ## Testing
 
-You can also optionally run this project's tests from the `build` directory with:
+This project's tests can be optionally run from the `build` directory with:
 
 ```bash
 make test
 ```
 
-This builds and runs the tests.
+This runs the tests.
 
 ## License
 
