@@ -4,6 +4,8 @@
 
 Simple demonstration of C++ principles in the context of a vehicle fleet simulation.
 
+## Configuration
+
 The following packages are required:
 
 - **C++ Compiler:** Any C++ compiler with support for the C++17 standard will do, such as recent versions of GCC or Clang. On Ubuntu, install GCC with `sudo apt install g++` or Clang with `sudo apt install clang`.
@@ -23,6 +25,8 @@ make --jobs=16
 ```
 
 This builds the `build/bin/joby-demo` main executable and the testing executables.
+
+## Usage
 
 Print usage information to the console by running the main executable from the `build` directory with:
 
@@ -50,6 +54,15 @@ For example, the following command runs a 3-hour simulation containing 20 vehicl
 bin/joby-demo --vehicles 20 --charging-stations 3 --duration-hours 3.0 --results results.dat
 ```
 
+## Results
+
+A sample console log and results file are located in the `results` directory:
+
+- [results.dat](results/results.dat)
+- [log.txt](results/log.txt)
+
+## Testing
+
 You can also optionally run this project's tests from the `build` directory with:
 
 ```bash
@@ -57,5 +70,7 @@ make test
 ```
 
 This builds and runs the tests.
+
+## License
 
 This project is maintained by Alexandre Coderre-Chabot (<https://github.com/acodcha>) and licensed under the MIT License. For more details, see the [LICENSE](LICENSE) file or <https://mit-license.org/>.
