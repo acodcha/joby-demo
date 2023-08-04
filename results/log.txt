@@ -1,7 +1,7 @@
 Joby Demo
 Simple demonstration of C++ principles in the context of a vehicle fleet simulation.
 Version: Aug  3 2023, 22:03:23
-Command: ./bin/joby-demo --vehicles 20 --charging-stations 3 --duration-hours 3
+Command: ./bin/joby-demo --vehicles 20 --charging-stations 3 --duration-hours 3 --results results.dat
 - The number of vehicles in the simulation is: 20
 - The number of charging stations in the simulation is: 3
 - The time duration of the simulation is: 3.000000 hr
