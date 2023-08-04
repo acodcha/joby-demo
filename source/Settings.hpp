@@ -188,7 +188,7 @@ private:
         << " " << vehicles_ << " " << Arguments::ChargingStationsKey << " "
         << charging_stations_ << " " << Arguments::DurationKey << " "
         << duration_.Value(PhQ::Unit::Time::Hour)
-        << (results_.empty() ?
+        << (!results_.empty() ?
                 " " + Arguments::ResultsKey + " " + results_.string() :
                 "")
         << (seed_.has_value() ?
