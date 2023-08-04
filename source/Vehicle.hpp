@@ -86,10 +86,12 @@ public:
     if (model_ == nullptr) {
       return PhQ::Length::Zero();
     }
+
     if (model_->TransportEnergyConsumption()
         <= PhQ::TransportEnergyConsumption::Zero()) {
       return PhQ::Length::Zero();
     }
+
     return battery_ / model_->TransportEnergyConsumption();
   }
 
@@ -99,9 +101,11 @@ public:
     if (model_ == nullptr) {
       return PhQ::Time::Zero();
     }
+
     if (model_->CruiseSpeed() <= PhQ::Speed::Zero()) {
       return PhQ::Time::Zero();
     }
+
     return Range() / model_->CruiseSpeed();
   }
 
@@ -111,14 +115,18 @@ public:
     if (model_ == nullptr) {
       return PhQ::Time::Zero();
     }
+
     if (battery_ >= model_->BatteryCapacity()) {
       return PhQ::Time::Zero();
     }
+
     if (model_->ChargingRate() <= PhQ::Power::Zero()) {
       return PhQ::Time::Zero();
     }
+
     const PhQ::Energy energy_to_full_charge =
         model_->BatteryCapacity() - battery_;
+
     return energy_to_full_charge / model_->ChargingRate();
   }
 
@@ -226,6 +234,7 @@ private:
     if (!charging_station_id_.has_value()) {
       const std::shared_ptr<ChargingStation> best_charging_station =
           charging_stations.LowestCount();
+
       if (best_charging_station != nullptr) {
         best_charging_station->Enqueue(id_);
         charging_station_id_ = best_charging_station->Id();
@@ -240,7 +249,9 @@ private:
     if (charging_station_id_.has_value()) {
       const std::shared_ptr<ChargingStation> charging_station =
           charging_stations.At(charging_station_id_.value());
+
       const std::optional<VehicleId> front_id = charging_station->Front();
+
       if (front_id.has_value() && front_id == id_) {
         return true;
       }
@@ -258,11 +269,15 @@ private:
   void Charge(
       const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
     status_ = VehicleStatus::Charging;
+
     if (model_ == nullptr) {
       return;
     }
+
     battery_ += model_->ChargingRate() * duration;
+
     statistics_.ModifyTotalChargingSessionDuration(duration);
+
     RandomlyGenerateFaults(duration, random_generator);
   }
 
@@ -273,6 +288,7 @@ private:
     if (charging_station_id_.has_value()) {
       const std::shared_ptr<ChargingStation> charging_station =
           charging_stations.At(charging_station_id_.value());
+
       if (charging_station != nullptr) {
         charging_station->Dequeue();
         charging_station_id_.reset();
@@ -284,13 +300,18 @@ private:
   void Fly(
       const PhQ::Time& duration, std::mt19937_64& random_generator) noexcept {
     status_ = VehicleStatus::Flying;
+
     if (model_ == nullptr) {
       return;
     }
+
     const PhQ::Length distance = model_->CruiseSpeed() * duration;
+
     battery_ -= model_->TransportPowerUsage() * duration;
+
     statistics_.ModifyTotalFlightDurationAndDistance(
         model_->PassengerCount(), duration, distance);
+
     RandomlyGenerateFaults(duration, random_generator);
   }
 
@@ -301,11 +322,15 @@ private:
     if (model_ == nullptr) {
       return;
     }
+
     const double expected_faults_during_this_duration =
         duration * model_->MeanFaultRate();
+
     std::poisson_distribution<int64_t> distribution(
         expected_faults_during_this_duration);
+
     const int64_t faults_during_this_duration = distribution(random_generator);
+
     statistics_.ModifyTotalFaultCount(faults_during_this_duration);
   }
 

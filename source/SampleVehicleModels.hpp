@@ -25,14 +25,16 @@
 #ifndef DEMO_INCLUDE_SAMPLE_VEHICLE_MODELS_HPP
 #define DEMO_INCLUDE_SAMPLE_VEHICLE_MODELS_HPP
 
+#include <iostream>
+
 #include "VehicleModels.hpp"
 
 namespace Demo {
 
 VehicleModels GenerateSampleVehicleModels() noexcept {
-  VehicleModels models;
+  VehicleModels vehicle_models;
 
-  models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/0,
       /*manufacturer_name_english=*/"Alpha Company",
       /*model_name_english=*/"Alpha Model",
@@ -45,7 +47,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           1.6, PhQ::Unit::Force::KilowattHourPerMile)));
 
-  models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/1,
       /*manufacturer_name_english=*/"Bravo Company",
       /*model_name_english=*/"Bravo Model",
@@ -58,7 +60,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           1.5, PhQ::Unit::Force::KilowattHourPerMile)));
 
-  models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/2,
       /*manufacturer_name_english=*/"Charlie Company",
       /*model_name_english=*/"Charlie Model",
@@ -71,7 +73,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           2.2, PhQ::Unit::Force::KilowattHourPerMile)));
 
-  models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/3,
       /*manufacturer_name_english=*/"Delta Company",
       /*model_name_english=*/"Delta Model",
@@ -84,7 +86,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           0.8, PhQ::Unit::Force::KilowattHourPerMile)));
 
-  models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/4,
       /*manufacturer_name_english=*/"Echo Company",
       /*model_name_english=*/"Echo Model",
@@ -97,7 +99,10 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           5.8, PhQ::Unit::Force::KilowattHourPerMile)));
 
-  return models;
+  std::cout << "Generated " << vehicle_models.Size()
+            << " sample vehicle models." << std::endl;
+
+  return vehicle_models;
 }
 
 }  // namespace Demo

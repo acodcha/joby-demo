@@ -42,60 +42,75 @@ TEST(ChargingStations, Constructor) {
 TEST(ChargingStations, Empty) {
   const ChargingStations charging_stations_a;
   EXPECT_TRUE(charging_stations_a.Empty());
-  const std::shared_ptr<ChargingStation> charging_station_123 =
-      std::make_shared<ChargingStation>(123);
+
   ChargingStations charging_stations_b;
-  charging_stations_b.Insert(charging_station_123);
+  charging_stations_b.Insert(std::make_shared<ChargingStation>(111));
   EXPECT_FALSE(charging_stations_b.Empty());
 }
 
 TEST(ChargingStations, Size) {
   ChargingStations charging_stations;
+
   EXPECT_EQ(charging_stations.Size(), 0);
-  charging_stations.Insert(std::make_shared<ChargingStation>(123));
+
+  charging_stations.Insert(std::make_shared<ChargingStation>(111));
   EXPECT_EQ(charging_stations.Size(), 1);
-  charging_stations.Insert(std::make_shared<ChargingStation>(456));
+
+  charging_stations.Insert(std::make_shared<ChargingStation>(222));
   EXPECT_EQ(charging_stations.Size(), 2);
 }
 
 TEST(ChargingStations, Insert) {
   ChargingStations charging_stations;
+
   EXPECT_FALSE(charging_stations.Insert(nullptr));
-  EXPECT_TRUE(charging_stations.Insert(std::make_shared<ChargingStation>(123)));
+
+  EXPECT_TRUE(charging_stations.Insert(std::make_shared<ChargingStation>(111)));
+
   EXPECT_FALSE(
-      charging_stations.Insert(std::make_shared<ChargingStation>(123)));
-  EXPECT_TRUE(charging_stations.Insert(std::make_shared<ChargingStation>(456)));
+      charging_stations.Insert(std::make_shared<ChargingStation>(111)));
+
+  EXPECT_TRUE(charging_stations.Insert(std::make_shared<ChargingStation>(222)));
 }
 
 TEST(ChargingStations, At) {
   ChargingStations charging_stations;
-  const std::shared_ptr<ChargingStation> charging_station_123 =
-      std::make_shared<ChargingStation>(123);
-  const std::shared_ptr<ChargingStation> charging_station_456 =
-      std::make_shared<ChargingStation>(456);
-  charging_stations.Insert(charging_station_123);
-  charging_stations.Insert(charging_station_456);
-  EXPECT_EQ(charging_stations.At(123), charging_station_123);
-  EXPECT_EQ(charging_stations.At(456), charging_station_456);
-  EXPECT_EQ(charging_stations.At(789), nullptr);
+  const std::shared_ptr<ChargingStation> charging_station_111 =
+      std::make_shared<ChargingStation>(111);
+
+  const std::shared_ptr<ChargingStation> charging_station_222 =
+      std::make_shared<ChargingStation>(222);
+
+  charging_stations.Insert(charging_station_111);
+  charging_stations.Insert(charging_station_222);
+
+  EXPECT_EQ(charging_stations.At(111), charging_station_111);
+  EXPECT_EQ(charging_stations.At(222), charging_station_222);
+  EXPECT_EQ(charging_stations.At(333), nullptr);
 }
 
 TEST(ChargingStations, LowestCount) {
   ChargingStations charging_stations;
+
   EXPECT_EQ(charging_stations.LowestCount(), nullptr);
-  const std::shared_ptr<ChargingStation> charging_station_123 =
-      std::make_shared<ChargingStation>(123);
-  const std::shared_ptr<ChargingStation> charging_station_456 =
-      std::make_shared<ChargingStation>(456);
-  charging_stations.Insert(charging_station_123);
-  charging_stations.Insert(charging_station_456);
-  charging_station_123->Enqueue(7);
-  charging_station_123->Enqueue(8);
-  charging_station_456->Enqueue(9);
-  EXPECT_EQ(charging_stations.LowestCount(), charging_station_456);
-  charging_station_123->Dequeue();
-  charging_station_123->Dequeue();
-  EXPECT_EQ(charging_stations.LowestCount(), charging_station_123);
+
+  const std::shared_ptr<ChargingStation> charging_station_111 =
+      std::make_shared<ChargingStation>(111);
+
+  const std::shared_ptr<ChargingStation> charging_station_222 =
+      std::make_shared<ChargingStation>(222);
+
+  charging_stations.Insert(charging_station_111);
+  charging_stations.Insert(charging_station_222);
+
+  charging_station_111->Enqueue(7);
+  charging_station_111->Enqueue(8);
+  charging_station_222->Enqueue(9);
+  EXPECT_EQ(charging_stations.LowestCount(), charging_station_222);
+
+  charging_station_111->Dequeue();
+  charging_station_111->Dequeue();
+  EXPECT_EQ(charging_stations.LowestCount(), charging_station_111);
 }
 
 }  // namespace

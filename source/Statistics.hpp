@@ -96,7 +96,9 @@ public:
   // statistics.
   void IncrementTotalFlightCount() noexcept {
     ++total_flight_count_;
+
     mean_flight_duration_ = total_flight_duration_ / total_flight_count_;
+
     mean_flight_distance_ = total_flight_distance_ / total_flight_count_;
   }
 
@@ -106,9 +108,13 @@ public:
       const int32_t passenger_count, const PhQ::Time& duration_difference,
       const PhQ::Length& distance_difference) noexcept {
     total_flight_duration_ += duration_difference;
+
     mean_flight_duration_ = total_flight_duration_ / total_flight_count_;
+
     total_flight_distance_ += distance_difference;
+
     mean_flight_distance_ = total_flight_distance_ / total_flight_count_;
+
     total_flight_passenger_distance_ += passenger_count * distance_difference;
   }
 
@@ -116,6 +122,7 @@ public:
   // dependent statistics.
   void IncrementTotalChargingSessionCount() noexcept {
     ++total_charging_session_count_;
+
     mean_charging_duration_ =
         total_charging_duration_ / total_charging_session_count_;
   }
@@ -125,6 +132,7 @@ public:
   void ModifyTotalChargingSessionDuration(
       const PhQ::Time& duration_difference) noexcept {
     total_charging_duration_ += duration_difference;
+
     mean_charging_duration_ =
         total_charging_duration_ / total_charging_session_count_;
   }
@@ -137,15 +145,24 @@ public:
   // Aggregates data from another set of statistics into this set of statistics.
   void Aggregate(const Statistics& other) noexcept {
     total_flight_count_ += other.total_flight_count_;
+
     total_flight_duration_ += other.total_flight_duration_;
+
     total_flight_distance_ += other.total_flight_distance_;
+
     total_flight_passenger_distance_ += other.total_flight_passenger_distance_;
+
     mean_flight_duration_ = total_flight_duration_ / total_flight_count_;
+
     mean_flight_distance_ = total_flight_distance_ / total_flight_count_;
+
     total_charging_session_count_ += other.total_charging_session_count_;
+
     total_charging_duration_ += other.total_charging_duration_;
+
     mean_charging_duration_ =
         total_charging_duration_ / total_charging_session_count_;
+
     total_fault_count_ += other.total_fault_count_;
   }
 

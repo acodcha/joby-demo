@@ -25,6 +25,8 @@
 #ifndef DEMO_INCLUDE_RESULTS_FILE_WRITER_HPP
 #define DEMO_INCLUDE_RESULTS_FILE_WRITER_HPP
 
+#include <iostream>
+
 #include "AggregateStatistics.hpp"
 #include "String.hpp"
 #include "TextFileWriter.hpp"
@@ -41,60 +43,30 @@ public:
       const std::filesystem::path& path, const VehicleModels& vehicle_models,
       const AggregateStatistics& aggregate_statistics)
     : TextFileWriter(path) {
-    ComputePaddingLengths(vehicle_models, aggregate_statistics);
+    InitializePaddingLengths(vehicle_models, aggregate_statistics);
 
-    // Print the header line.
-    Line(PadToLength(manufacturer_, manufacturer_padding_) + space_
-         + PadToLength(model_, model_padding_) + space_
-         + PadToLength(mean_flight_duration_, mean_flight_duration_padding_)
-         + space_
-         + PadToLength(mean_flight_distance_, mean_flight_distance_padding_)
-         + space_
-         + PadToLength(mean_charging_duration_, mean_charging_duration_padding_)
-         + space_
-         + PadToLength(total_flight_passenger_distance_,
-                       total_flight_passenger_distance_padding_)
-         + space_ + PadToLength(total_faults_, total_faults_padding_));
+    WriteHeader();
 
-    // Print one line for each vehicle model.
+    // Print a line for each vehicle model.
     for (const std::pair<const VehicleModelId, Statistics>&
              vehicle_model_id_and_statistics : aggregate_statistics) {
-      const VehicleModelId& vehicle_model_id =
-          vehicle_model_id_and_statistics.first;
-
-      const Statistics& statistics = vehicle_model_id_and_statistics.second;
-
       const std::shared_ptr<const VehicleModel> vehicle_model =
-          vehicle_models.At(vehicle_model_id);
+          vehicle_models.At(vehicle_model_id_and_statistics.first);
 
       if (vehicle_model == nullptr) {
         continue;
       }
 
-      Line(
-          PadToLength(
-              PrintManufacturerName(*vehicle_model), manufacturer_padding_)
-          + space_ + PadToLength(PrintModelName(*vehicle_model), model_padding_)
-          + space_
-          + PadToLength(PrintMeanFlightDuration(statistics),
-                        mean_flight_duration_padding_)
-          + space_
-          + PadToLength(PrintMeanFlightDistance(statistics),
-                        mean_flight_distance_padding_)
-          + space_
-          + PadToLength(PrintMeanChargingDuration(statistics),
-                        mean_charging_duration_padding_)
-          + space_
-          + PadToLength(PrintTotalFlightPassengerDistance(statistics),
-                        total_flight_passenger_distance_padding_)
-          + space_
-          + PadToLength(
-              PrintTotalFaultCount(statistics), total_faults_padding_));
+      WriteVehicleModelLine(
+          *vehicle_model, vehicle_model_id_and_statistics.second);
     }
+
+    std::cout << "Wrote the results to: " << path_.string() << std::endl;
   }
 
 private:
-  void ComputePaddingLengths(
+  // Initializes the padding lengths of each statistic.
+  void InitializePaddingLengths(
       const VehicleModels& vehicle_models,
       const AggregateStatistics& aggregate_statistics) noexcept {
     for (const std::pair<const VehicleModelId, Statistics>&
@@ -161,43 +133,87 @@ private:
     }
   }
 
+  // Writes the header line to the file.
+  void WriteHeader() noexcept {
+    Line(PadToLength(manufacturer_, manufacturer_padding_) + indent_
+         + PadToLength(model_, model_padding_) + indent_
+         + PadToLength(mean_flight_duration_, mean_flight_duration_padding_)
+         + indent_
+         + PadToLength(mean_flight_distance_, mean_flight_distance_padding_)
+         + indent_
+         + PadToLength(mean_charging_duration_, mean_charging_duration_padding_)
+         + indent_
+         + PadToLength(total_flight_passenger_distance_,
+                       total_flight_passenger_distance_padding_)
+         + indent_ + PadToLength(total_faults_, total_faults_padding_));
+  }
+
+  // Writes the line corresponding to a vehicle model to the file.
+  void WriteVehicleModelLine(const VehicleModel& vehicle_model,
+                             const Statistics& statistics) noexcept {
+    Line(
+        PadToLength(PrintManufacturerName(vehicle_model), manufacturer_padding_)
+        + indent_ + PadToLength(PrintModelName(vehicle_model), model_padding_)
+        + indent_
+        + PadToLength(
+            PrintMeanFlightDuration(statistics), mean_flight_duration_padding_)
+        + indent_
+        + PadToLength(
+            PrintMeanFlightDistance(statistics), mean_flight_distance_padding_)
+        + indent_
+        + PadToLength(PrintMeanChargingDuration(statistics),
+                      mean_charging_duration_padding_)
+        + indent_
+        + PadToLength(PrintTotalFlightPassengerDistance(statistics),
+                      total_flight_passenger_distance_padding_)
+        + indent_
+        + PadToLength(PrintTotalFaultCount(statistics), total_faults_padding_));
+  }
+
+  // Returns the printer-friendly manufacturer name of a vehicle model.
   std::string PrintManufacturerName(
       const VehicleModel& vehicle_model) const noexcept {
     return ReplaceSpacesWithUnderscores(
         vehicle_model.ManufacturerNameEnglish());
   }
 
+  // Returns the printer-friendly model name of a vehicle model.
   std::string PrintModelName(const VehicleModel& vehicle_model) const noexcept {
     return ReplaceSpacesWithUnderscores(vehicle_model.ModelNameEnglish());
   }
 
+  // Returns the printed mean flight duration of a statistics object.
   std::string PrintMeanFlightDuration(
       const Statistics& statistics) const noexcept {
     return statistics.MeanFlightDuration().Print(PhQ::Unit::Time::Hour);
   }
 
+  // Returns the printed mean flight distance of a statistics object.
   std::string PrintMeanFlightDistance(
       const Statistics& statistics) const noexcept {
     return statistics.MeanFlightDistance().Print(PhQ::Unit::Length::Mile);
   }
 
+  // Returns the printed mean charging duration of a statistics object.
   std::string PrintMeanChargingDuration(
       const Statistics& statistics) const noexcept {
     return statistics.MeanChargingDuration().Print(PhQ::Unit::Time::Hour);
   }
 
+  // Returns the printed total flight passenger distance of a statistics object.
   std::string PrintTotalFlightPassengerDistance(
       const Statistics& statistics) const noexcept {
     return statistics.TotalFlightPassengerDistance().Print(
         PhQ::Unit::Length::Mile);
   }
 
+  // Returns the printed total fault count of a statistics object.
   std::string PrintTotalFaultCount(
       const Statistics& statistics) const noexcept {
     return std::to_string(statistics.TotalFaultCount());
   }
 
-  const std::string space_{"  "};
+  const std::string indent_{"  "};
 
   std::string manufacturer_{"#Manufacturer"};
 

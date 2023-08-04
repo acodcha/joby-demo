@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#include <iostream>
 #include <optional>
 #include <PhQ/Time.hpp>
 #include <string>
@@ -47,20 +48,10 @@ public:
   // Constructs settings from command-line arguments.
   Settings(const int argc, char* argv[]) noexcept : executable_name_(argv[0]) {
     ParseArguments(argc, argv);
-    MessageHeaderInformation();
-    MessageCommand();
-    MessageStartInformation();
+    PrintHeader();
+    PrintCommand();
+    PrintSettings();
   }
-
-  // Constructs settings from the given parameters and checks them for
-  // consistency.
-  Settings(const int32_t vehicles, const int32_t charging_stations,
-           const PhQ::Time& duration, const std::filesystem::path& results = {},
-           const std::optional<int64_t>& random_seed = std::nullopt) noexcept
-    : vehicles_(std::max(vehicles, 0)),
-      charging_stations_(std::max(charging_stations, 0)),
-      duration_(std::max(duration, PhQ::Time::Zero())), results_(results),
-      random_seed_(random_seed) {}
 
   // Number of vehicles in the simulation.
   constexpr int32_t Vehicles() const noexcept { return vehicles_; }
@@ -78,20 +69,20 @@ public:
   // Random seed used to generate pseudo-random numbers in the simulation, or
   // std::nullopt, in which case random numbers generated in the simulation are
   // truly random.
-  constexpr const std::optional<int64_t>& RandomSeed() const noexcept {
-    return random_seed_;
+  constexpr const std::optional<int64_t>& Seed() const noexcept {
+    return seed_;
   }
 
 private:
   // Prints the program header information to the console.
-  void MessageHeaderInformation() const noexcept {
+  void PrintHeader() const noexcept {
     std::cout << Program::Title << std::endl;
     std::cout << Program::Description << std::endl;
     std::cout << "Version: " << Program::CompilationDateAndTime << std::endl;
   }
 
   // Prints the program usage information to the console.
-  void MessageUsageInformation() const noexcept {
+  void PrintUsage() const noexcept {
     const std::string indent{"  "};
 
     std::cout << "Usage:" << std::endl;
@@ -99,7 +90,7 @@ private:
     std::cout << indent << executable_name_ << " " << Arguments::VehiclesPattern
               << " " << Arguments::ChargingStationsPattern << " "
               << Arguments::DurationPattern << " [" << Arguments::ResultsPattern
-              << "] [" << Arguments::RandomSeedPattern << "]" << std::endl;
+              << "] [" << Arguments::SeedPattern << "]" << std::endl;
 
     // Compute the padding length of the argument patterns.
     const std::size_t length{std::max({
@@ -108,7 +99,7 @@ private:
         Arguments::ChargingStationsPattern.length(),
         Arguments::DurationPattern.length(),
         Arguments::ResultsPattern.length(),
-        Arguments::RandomSeedPattern.length(),
+        Arguments::SeedPattern.length(),
     })};
 
     std::cout << "Arguments:" << std::endl;
@@ -133,17 +124,16 @@ private:
         << indent << PadToLength(Arguments::ResultsPattern, length) << indent
         << "Path to the results file to be written. Optional." << std::endl;
 
-    std::cout
-        << indent << PadToLength(Arguments::RandomSeedPattern, length) << indent
-        << "Seed value for pseudo-random number generation. Optional."
-        << std::endl;
+    std::cout << indent << PadToLength(Arguments::SeedPattern, length) << indent
+              << "Seed value for pseudo-random number generation. Optional."
+              << std::endl;
   }
 
   // Parses the command-line arguments.
   void ParseArguments(const int argc, char* argv[]) noexcept {
     if (argc <= 1) {
-      MessageHeaderInformation();
-      MessageUsageInformation();
+      PrintHeader();
+      PrintUsage();
       exit(EXIT_SUCCESS);
     }
 
@@ -151,8 +141,8 @@ private:
     // it is the name of the executable.
     for (int index = 1; index < argc; ++index) {
       if (argv[index] == Arguments::Help) {
-        MessageHeaderInformation();
-        MessageUsageInformation();
+        PrintHeader();
+        PrintUsage();
         exit(EXIT_SUCCESS);
       } else if (argv[index] == Arguments::VehiclesKey
                  && AtLeastOneMoreArgument(index, argc)) {
@@ -171,14 +161,14 @@ private:
                  && AtLeastOneMoreArgument(index, argc)) {
         results_ = argv[index + 1];
         ++index;
-      } else if (argv[index] == Arguments::RandomSeedKey
+      } else if (argv[index] == Arguments::SeedKey
                  && AtLeastOneMoreArgument(index, argc)) {
-        random_seed_ = std::atoi(argv[index + 1]);
+        seed_ = std::atoi(argv[index + 1]);
         ++index;
       } else {
-        MessageHeaderInformation();
+        PrintHeader();
         std::cout << "Unrecognized argument: " << argv[index] << std::endl;
-        MessageUsageInformation();
+        PrintUsage();
         exit(EXIT_FAILURE);
       }
     }
@@ -192,7 +182,7 @@ private:
   }
 
   // Prints the command to the console.
-  void MessageCommand() const noexcept {
+  void PrintCommand() const noexcept {
     std::cout
         << "Command: " << executable_name_ << " " << Arguments::VehiclesKey
         << " " << vehicles_ << " " << Arguments::ChargingStationsKey << " "
@@ -201,14 +191,14 @@ private:
         << (results_.empty() ?
                 " " + Arguments::ResultsKey + " " + results_.string() :
                 "")
-        << (random_seed_.has_value() ?
-                " " + Arguments::RandomSeedKey + " "
-                    + std::to_string(random_seed_.value()) :
+        << (seed_.has_value() ?
+                " " + Arguments::SeedKey + " " + std::to_string(seed_.value()) :
                 "")
         << std::endl;
   }
 
-  void MessageStartInformation() const noexcept {
+  // Prints the settings to the console.
+  void PrintSettings() const noexcept {
     std::cout << "- The number of vehicles in the simulation is: " << vehicles_
               << std::endl;
     std::cout << "- The number of charging stations in the simulation is: "
@@ -222,9 +212,9 @@ private:
       std::cout << "- The simulation results will be written to: " << results_
                 << std::endl;
     }
-    if (random_seed_.has_value()) {
+    if (seed_.has_value()) {
       std::cout << "- The seed value for pseudo-random number generation is : "
-                << random_seed_.value() << std::endl;
+                << seed_.value() << std::endl;
     } else {
       std::cout << "- The seed value for random number generation will be "
                    "randomized."
@@ -242,7 +232,7 @@ private:
 
   std::filesystem::path results_;
 
-  std::optional<int64_t> random_seed_;
+  std::optional<int64_t> seed_;
 };
 
 }  // namespace Demo

@@ -32,31 +32,34 @@ namespace {
 
 const std::shared_ptr<const VehicleModel> model =
     std::make_shared<const VehicleModel>(
-        /*id=*/123,
+        /*id=*/111,
         /*manufacturer_name_english=*/"Manufacturer A",
-        /*model_name_english=*/"Model B",
+        /*model_name_english=*/"Model A",
         /*passenger_count=*/4,
-        /*cruise_speed=*/PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-        /*battery_capacity=*/PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-        /*charging_duration=*/PhQ::Time(0.8, PhQ::Unit::Time::Hour),
-        /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
+        /*cruise_speed=*/PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour),
+        /*battery_capacity=*/PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour),
+        /*charging_duration=*/PhQ::Time(0.6, PhQ::Unit::Time::Hour),
+        /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
         /*transport_energy_consumption=*/
         PhQ::TransportEnergyConsumption(
-            2.0, PhQ::Unit::Force::KilowattHourPerMile));
+            1.6, PhQ::Unit::Force::KilowattHourPerMile));
 
-const std::shared_ptr<Vehicle> vehicle123 =
-    std::make_shared<Vehicle>(123, model);
+const std::shared_ptr<Vehicle> vehicle222 =
+    std::make_shared<Vehicle>(222, model);
 
-const std::shared_ptr<Vehicle> vehicle456 =
-    std::make_shared<Vehicle>(456, model);
+const std::shared_ptr<Vehicle> vehicle333 =
+    std::make_shared<Vehicle>(333, model);
 
 TEST(Vehicles, RandomConstructor) {
-  VehicleModels models;
-  models.Insert(model);
+  VehicleModels vehicle_models;
+  vehicle_models.Insert(model);
+
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());
   random_generator.seed(0);
-  const Vehicles vehicles{4, models, random_generator};
+
+  const Vehicles vehicles{4, vehicle_models, random_generator};
+
   EXPECT_EQ(vehicles.Size(), 4);
   EXPECT_NE(vehicles.At(0), nullptr);
   EXPECT_NE(vehicles.At(1), nullptr);
@@ -66,66 +69,72 @@ TEST(Vehicles, RandomConstructor) {
 }
 
 TEST(Vehicles, Empty) {
-  const Vehicles empty;
-  EXPECT_TRUE(empty.Empty());
-  Vehicles two;
-  two.Insert(vehicle123);
-  two.Insert(vehicle456);
-  EXPECT_FALSE(two.Empty());
+  const Vehicles vehicles0;
+  EXPECT_TRUE(vehicles0.Empty());
+
+  Vehicles vehicles1;
+  vehicles1.Insert(vehicle222);
+  vehicles1.Insert(vehicle333);
+  EXPECT_FALSE(vehicles1.Empty());
 }
 
 TEST(Vehicles, Size) {
-  const Vehicles empty;
-  EXPECT_EQ(empty.Size(), 0);
-  Vehicles two;
-  two.Insert(vehicle123);
-  two.Insert(vehicle456);
-  EXPECT_EQ(two.Size(), 2);
+  const Vehicles vehicles0;
+  EXPECT_EQ(vehicles0.Size(), 0);
+
+  Vehicles vehicles1;
+  vehicles1.Insert(vehicle222);
+  vehicles1.Insert(vehicle333);
+  EXPECT_EQ(vehicles1.Size(), 2);
 }
 
 TEST(Vehicles, Insert) {
   Vehicles vehicles;
   EXPECT_FALSE(vehicles.Insert(nullptr));
-  EXPECT_TRUE(vehicles.Insert(vehicle123));
-  EXPECT_FALSE(vehicles.Insert(vehicle123));
-  EXPECT_TRUE(vehicles.Insert(vehicle456));
-  EXPECT_FALSE(vehicles.Insert(vehicle456));
+  EXPECT_TRUE(vehicles.Insert(vehicle222));
+  EXPECT_FALSE(vehicles.Insert(vehicle222));
+  EXPECT_TRUE(vehicles.Insert(vehicle333));
+  EXPECT_FALSE(vehicles.Insert(vehicle333));
 }
 
 TEST(Vehicles, Exists) {
   Vehicles vehicles;
-  vehicles.Insert(vehicle123);
-  vehicles.Insert(vehicle456);
-  EXPECT_TRUE(vehicles.Exists(123));
-  EXPECT_TRUE(vehicles.Exists(456));
-  EXPECT_FALSE(vehicles.Exists(789));
+  vehicles.Insert(vehicle222);
+  vehicles.Insert(vehicle333);
+  EXPECT_TRUE(vehicles.Exists(222));
+  EXPECT_TRUE(vehicles.Exists(333));
+  EXPECT_FALSE(vehicles.Exists(444));
 }
 
 TEST(Vehicles, At) {
   Vehicles vehicles;
-  vehicles.Insert(vehicle123);
-  vehicles.Insert(vehicle456);
-  EXPECT_EQ(vehicles.At(123), vehicle123);
-  EXPECT_EQ(vehicles.At(456), vehicle456);
-  EXPECT_EQ(vehicles.At(789), nullptr);
+  vehicles.Insert(vehicle222);
+  vehicles.Insert(vehicle333);
+  EXPECT_EQ(vehicles.At(222), vehicle222);
+  EXPECT_EQ(vehicles.At(333), vehicle333);
+  EXPECT_EQ(vehicles.At(444), nullptr);
 }
 
 TEST(Vehicles, Random) {
   Vehicles vehicles;
+
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());
   random_generator.seed(0);
+
   EXPECT_EQ(vehicles.Random(random_generator), nullptr);
-  vehicles.Insert(vehicle123);
-  EXPECT_EQ(vehicles.Random(random_generator), vehicle123);
-  vehicles.Insert(vehicle456);
+
+  vehicles.Insert(vehicle222);
+  EXPECT_EQ(vehicles.Random(random_generator), vehicle222);
+
+  vehicles.Insert(vehicle333);
   EXPECT_NE(vehicles.Random(random_generator), nullptr);
 }
 
 TEST(Vehicles, Iterator) {
   Vehicles vehicles;
-  vehicles.Insert(vehicle123);
-  vehicles.Insert(vehicle456);
+  vehicles.Insert(vehicle222);
+  vehicles.Insert(vehicle333);
 
   int64_t count1 = 0;
   for (const std::shared_ptr<Vehicle>& vehicle : vehicles) {

@@ -45,45 +45,45 @@ TEST(Vehicle, DefaultConstructor) {
 }
 
 TEST(Vehicle, MainConstructor) {
-  const VehicleId id = 456;
+  const VehicleId id = 222;
 
-  const std::shared_ptr<const VehicleModel> model = std::make_shared<
+  const std::shared_ptr<const VehicleModel> vehicle_model = std::make_shared<
       const VehicleModel>(
-      /*id=*/123,
+      /*id=*/111,
       /*manufacturer_name_english=*/"Manufacturer A",
-      /*model_name_english=*/"Model B",
-      /*passenger_count=*/4,
+      /*model_name_english=*/"Model A",
+      /*passenger_count=*/5,
       /*cruise_speed=*/PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-      /*battery_capacity=*/PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-      /*charging_duration=*/PhQ::Time(0.8, PhQ::Unit::Time::Hour),
+      /*battery_capacity=*/PhQ::Energy(100.0, PhQ::Unit::Energy::KilowattHour),
+      /*charging_duration=*/PhQ::Time(0.2, PhQ::Unit::Time::Hour),
       /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          2.0, PhQ::Unit::Force::KilowattHourPerMile));
+          1.5, PhQ::Unit::Force::KilowattHourPerMile));
 
-  const Vehicle vehicle = {id, model};
+  const Vehicle vehicle = {id, vehicle_model};
 
   EXPECT_EQ(vehicle.Id(), id);
-  EXPECT_EQ(vehicle.Model(), model);
+  EXPECT_EQ(vehicle.Model(), vehicle_model);
   EXPECT_EQ(vehicle.Status(), VehicleStatus::OnStandby);
   EXPECT_EQ(vehicle.ChargingStationId(), std::nullopt);
-  EXPECT_EQ(
-      vehicle.Battery(), PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour));
+  EXPECT_EQ(vehicle.Battery(), vehicle_model->BatteryCapacity());
   EXPECT_EQ(vehicle.Statistics(), Statistics());
-  EXPECT_EQ(vehicle.Range(), model->RangeLimit());
-  EXPECT_EQ(vehicle.Endurance(), model->EnduranceLimit());
+  EXPECT_EQ(vehicle.Range(), vehicle_model->RangeLimit());
+  EXPECT_EQ(vehicle.Endurance(), vehicle_model->EnduranceLimit());
   EXPECT_EQ(vehicle.DurationToFullCharge(), PhQ::Time::Zero());
-  EXPECT_EQ(vehicle.DurationToNextStatusChange(), model->EnduranceLimit());
+  EXPECT_EQ(
+      vehicle.DurationToNextStatusChange(), vehicle_model->EnduranceLimit());
 }
 
 TEST(Vehicle, TimeStep) {
-  const VehicleId id = 456;
+  const VehicleId id = 222;
 
-  const std::shared_ptr<const VehicleModel> model =
+  const std::shared_ptr<const VehicleModel> vehicle_model =
       std::make_shared<const VehicleModel>(
-          /*id=*/123,
+          /*id=*/111,
           /*manufacturer_name_english=*/"Manufacturer A",
-          /*model_name_english=*/"Model B",
+          /*model_name_english=*/"Model A",
           /*passenger_count=*/4,
           /*cruise_speed=*/PhQ::Speed(1.0, PhQ::Unit::Speed::MetrePerSecond),
           /*battery_capacity=*/PhQ::Energy(2.0, PhQ::Unit::Energy::Joule),
@@ -92,7 +92,7 @@ TEST(Vehicle, TimeStep) {
           /*transport_energy_consumption=*/
           PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton));
 
-  Vehicle vehicle = {id, model};
+  Vehicle vehicle = {id, vehicle_model};
 
   ChargingStations charging_stations;
   const std::shared_ptr<ChargingStation> charging_station =

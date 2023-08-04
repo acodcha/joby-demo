@@ -41,23 +41,41 @@ public:
   Simulation(const PhQ::Time& duration, Vehicles& vehicles,
              ChargingStations& charging_stations,
              std::mt19937_64& random_generator) noexcept {
+    if (elapsed_time_ < duration) {
+      std::cout << "Time steps:" << std::endl;
+    }
+
     while (elapsed_time_ < duration) {
-      const PhQ::Time time_step = ComputeTimeStep(duration, vehicles);
-      if (time_step <= PhQ::Time::Zero()) {
+      time_step_ = ComputeTimeStep(duration, vehicles);
+
+      if (time_step_ <= PhQ::Time::Zero()) {
         break;
       }
-      RunTimeStep(time_step, vehicles, charging_stations, random_generator);
-      elapsed_time_ += time_step;
+
+      ++time_step_count_;
+
+      elapsed_time_ += time_step_;
+
+      PrintTimeStepInformation();
+
+      RunTimeStep(vehicles, charging_stations, random_generator);
     }
   }
 
 private:
-  // Runs a time step of this simulation.
+  // Prints the current time step information to the console.
+  void PrintTimeStepInformation() const noexcept {
+    std::cout << "- Time step " << time_step_count_
+              << ": increment = " << time_step_.Print(PhQ::Unit::Time::Minute)
+              << ", elapsed = " << elapsed_time_.Print(PhQ::Unit::Time::Minute)
+              << std::endl;
+  }
+
+  // Runs the current time step of this simulation.
   // TODO: Consider using multithreading to operate on all vehicles in parallel,
   // and make sure the relevant operations are performed atomically when
   // appropriate.
-  void RunTimeStep(const PhQ::Time& time_step, Vehicles& vehicles,
-                   ChargingStations& charging_stations,
+  void RunTimeStep(Vehicles& vehicles, ChargingStations& charging_stations,
                    std::mt19937_64& random_generator) noexcept {
     // Update all vehicles at the beginning of the time step.
     UpdateAllVehicles(vehicles, charging_stations);
@@ -66,7 +84,7 @@ private:
     for (const std::shared_ptr<Vehicle>& vehicle : vehicles) {
       if (vehicle != nullptr) {
         vehicle->PerformTimeStep(
-            time_step, charging_stations, random_generator);
+            time_step_, charging_stations, random_generator);
       }
     }
 
@@ -84,23 +102,33 @@ private:
     }
   }
 
-  // Computes the largest possible time step given the states of the vehicles.
+  // Computes the largest possible time step given the states of all the
+  // vehicles.
   PhQ::Time ComputeTimeStep(
       const PhQ::Time& duration, const Vehicles& vehicles) const noexcept {
     PhQ::Time time_step = duration;
+
     for (const std::shared_ptr<Vehicle>& vehicle : vehicles) {
       if (vehicle != nullptr) {
         const PhQ::Time vehicle_time_step =
             vehicle->DurationToNextStatusChange();
+
         if (vehicle_time_step < time_step) {
           time_step = vehicle_time_step;
         }
       }
     }
+
     return time_step;
   }
 
-  // Elapsed time in the simulation.
+  // Current number of time steps in the simulation.
+  std::size_t time_step_count_ = 0;
+
+  // Current time step of the simulation.
+  PhQ::Time time_step_ = PhQ::Time::Zero();
+
+  // Current elapsed time in the simulation.
   PhQ::Time elapsed_time_ = PhQ::Time::Zero();
 };
 

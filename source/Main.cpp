@@ -41,8 +41,8 @@ int main(int argc, char* argv[]) {
 
   std::random_device random_device;
   std::mt19937_64 random_generator(random_device());
-  if (settings.RandomSeed().has_value()) {
-    random_generator.seed(settings.RandomSeed().value());
+  if (settings.Seed().has_value()) {
+    random_generator.seed(settings.Seed().value());
   }
 
   Demo::Vehicles vehicles{
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
   const Demo::ResultsFileWriter results_file_writer{
       settings.Results(), vehicle_models, aggregate_statistics};
 
-  std::cout << "End of program." << std::endl;
+  std::cout << "End of " << Demo::Program::Title << "." << std::endl;
 
   return EXIT_SUCCESS;
 }

@@ -30,64 +30,64 @@ namespace Demo {
 
 namespace {
 
-const std::shared_ptr<const VehicleModel> model =
+const std::shared_ptr<const VehicleModel> vehicle_model =
     std::make_shared<const VehicleModel>(
-        /*id=*/123,
+        /*id=*/111,
         /*manufacturer_name_english=*/"Manufacturer A",
-        /*model_name_english=*/"Model B",
+        /*model_name_english=*/"Model A",
         /*passenger_count=*/4,
-        /*cruise_speed=*/PhQ::Speed(100.0, PhQ::Unit::Speed::MilePerHour),
-        /*battery_capacity=*/PhQ::Energy(200.0, PhQ::Unit::Energy::KilowattHour),
-        /*charging_duration=*/PhQ::Time(0.8, PhQ::Unit::Time::Hour),
-        /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
+        /*cruise_speed=*/PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour),
+        /*battery_capacity=*/PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour),
+        /*charging_duration=*/PhQ::Time(0.6, PhQ::Unit::Time::Hour),
+        /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
         /*transport_energy_consumption=*/
         PhQ::TransportEnergyConsumption(
-            2.0, PhQ::Unit::Force::KilowattHourPerMile));
+            1.6, PhQ::Unit::Force::KilowattHourPerMile));
 
 TEST(AggregateStatistics, Empty) {
-  const AggregateStatistics empty;
-  EXPECT_TRUE(empty.Empty());
+  const AggregateStatistics aggregate_statistics_0;
+  EXPECT_TRUE(aggregate_statistics_0.Empty());
 
   Vehicles vehicles;
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/456, model));
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/789, model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/222, vehicle_model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/333, vehicle_model));
 
-  const AggregateStatistics aggregate_statistics{vehicles};
-  EXPECT_FALSE(aggregate_statistics.Empty());
+  const AggregateStatistics aggregate_statistics_1{vehicles};
+  EXPECT_FALSE(aggregate_statistics_1.Empty());
 }
 
 TEST(AggregateStatistics, Size) {
-  const AggregateStatistics empty;
-  EXPECT_EQ(empty.Size(), 0);
+  const AggregateStatistics aggregate_statistics_0;
+  EXPECT_EQ(aggregate_statistics_0.Size(), 0);
 
   Vehicles vehicles;
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/456, model));
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/789, model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/222, vehicle_model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/333, vehicle_model));
 
-  const AggregateStatistics aggregate_statistics{vehicles};
-  EXPECT_EQ(aggregate_statistics.Size(), 1);
+  const AggregateStatistics aggregate_statistics_1{vehicles};
+  EXPECT_EQ(aggregate_statistics_1.Size(), 1);
 }
 
 TEST(AggregateStatistics, At) {
   Vehicles vehicles;
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/456, model));
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/789, model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/222, vehicle_model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/333, vehicle_model));
 
   const AggregateStatistics aggregate_statistics{vehicles};
-  EXPECT_TRUE(aggregate_statistics.At(123).has_value());
-  EXPECT_EQ(aggregate_statistics.At(456), std::nullopt);
-  EXPECT_EQ(aggregate_statistics.At(789), std::nullopt);
+  EXPECT_TRUE(aggregate_statistics.At(111).has_value());
+  EXPECT_EQ(aggregate_statistics.At(222), std::nullopt);
+  EXPECT_EQ(aggregate_statistics.At(333), std::nullopt);
 }
 
 TEST(AggregateStatistics, Iterator) {
   Vehicles vehicles;
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/456, model));
-  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/789, model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/222, vehicle_model));
+  vehicles.Insert(std::make_shared<Vehicle>(/*id=*/333, vehicle_model));
 
   const AggregateStatistics aggregate_statistics{vehicles};
   for (const std::pair<const VehicleModelId, Statistics>&
            vehicle_model_id_and_statistics : aggregate_statistics) {
-    EXPECT_EQ(vehicle_model_id_and_statistics.first, 123);
+    EXPECT_EQ(vehicle_model_id_and_statistics.first, 111);
   }
 }
 

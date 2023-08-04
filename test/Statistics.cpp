@@ -53,8 +53,10 @@ TEST(Statistics, Operators) {
 
 TEST(Statistics, IncrementTotalFlightCount) {
   Statistics statistics;
+
   statistics.IncrementTotalFlightCount();
   EXPECT_EQ(statistics.TotalFlightCount(), 1);
+
   statistics.IncrementTotalFlightCount();
   EXPECT_EQ(statistics.TotalFlightCount(), 2);
 }
@@ -63,44 +65,58 @@ TEST(Statistics, ModifyTotalFlightDurationAndDistance) {
   Statistics statistics;
 
   statistics.IncrementTotalFlightCount();
+
   statistics.ModifyTotalFlightDurationAndDistance(
       /*passenger_count=*/2, PhQ::Time(1.0, PhQ::Unit::Time::Minute),
       PhQ::Length(1.0, PhQ::Unit::Length::Kilometre));
 
   EXPECT_EQ(statistics.TotalFlightCount(), 1);
+
   EXPECT_EQ(statistics.TotalFlightDuration(),
             PhQ::Time(1.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(statistics.TotalFlightDistance(),
             PhQ::Length(1.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(statistics.TotalFlightPassengerDistance(),
             PhQ::Length(2.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(
       statistics.MeanFlightDuration(), PhQ::Time(1.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(statistics.MeanFlightDistance(),
             PhQ::Length(1.0, PhQ::Unit::Length::Kilometre));
 
   statistics.IncrementTotalFlightCount();
+
   statistics.ModifyTotalFlightDurationAndDistance(
       /*passenger_count=*/2, PhQ::Time(1.0, PhQ::Unit::Time::Minute),
       PhQ::Length(1.0, PhQ::Unit::Length::Kilometre));
 
   EXPECT_EQ(statistics.TotalFlightCount(), 2);
+
   EXPECT_EQ(statistics.TotalFlightDuration(),
             PhQ::Time(2.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(statistics.TotalFlightDistance(),
             PhQ::Length(2.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(statistics.TotalFlightPassengerDistance(),
             PhQ::Length(4.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(
       statistics.MeanFlightDuration(), PhQ::Time(1.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(statistics.MeanFlightDistance(),
             PhQ::Length(1.0, PhQ::Unit::Length::Kilometre));
 }
 
 TEST(Statistics, IncrementTotalChargingSessionCount) {
   Statistics statistics;
+
   statistics.IncrementTotalChargingSessionCount();
   EXPECT_EQ(statistics.TotalChargingSessionCount(), 1);
+
   statistics.IncrementTotalChargingSessionCount();
   EXPECT_EQ(statistics.TotalChargingSessionCount(), 2);
 }
@@ -109,30 +125,38 @@ TEST(Statistics, ModifyTotalChargingSessionDuration) {
   Statistics statistics;
 
   statistics.IncrementTotalChargingSessionCount();
+
   statistics.ModifyTotalChargingSessionDuration(
       PhQ::Time(1.0, PhQ::Unit::Time::Minute));
 
   EXPECT_EQ(statistics.TotalChargingSessionCount(), 1);
+
   EXPECT_EQ(statistics.TotalChargingDuration(),
             PhQ::Time(1.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(statistics.MeanChargingDuration(),
             PhQ::Time(1.0, PhQ::Unit::Time::Minute));
 
   statistics.IncrementTotalChargingSessionCount();
+
   statistics.ModifyTotalChargingSessionDuration(
       PhQ::Time(1.0, PhQ::Unit::Time::Minute));
 
   EXPECT_EQ(statistics.TotalChargingSessionCount(), 2);
+
   EXPECT_EQ(statistics.TotalChargingDuration(),
             PhQ::Time(2.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(statistics.MeanChargingDuration(),
             PhQ::Time(1.0, PhQ::Unit::Time::Minute));
 }
 
 TEST(Statistics, ModifyTotalFaultCount) {
   Statistics statistics;
+
   statistics.ModifyTotalFaultCount(2);
   EXPECT_EQ(statistics.TotalFaultCount(), 2);
+
   statistics.ModifyTotalFaultCount(4);
   EXPECT_EQ(statistics.TotalFaultCount(), 6);
 }
@@ -174,21 +198,30 @@ TEST(Statistics, Aggregate) {
   aggregate.Aggregate(statistics2);
 
   EXPECT_EQ(aggregate.TotalFlightCount(), 8);
+
   EXPECT_EQ(
       aggregate.TotalFlightDuration(), PhQ::Time(8.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(aggregate.TotalFlightDistance(),
             PhQ::Length(8.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(aggregate.TotalFlightPassengerDistance(),
             PhQ::Length(16.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(
       aggregate.MeanFlightDuration(), PhQ::Time(1.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(aggregate.MeanFlightDistance(),
             PhQ::Length(1.0, PhQ::Unit::Length::Kilometre));
+
   EXPECT_EQ(aggregate.TotalChargingSessionCount(), 4);
+
   EXPECT_EQ(aggregate.TotalChargingDuration(),
             PhQ::Time(4.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(aggregate.MeanChargingDuration(),
             PhQ::Time(1.0, PhQ::Unit::Time::Minute));
+
   EXPECT_EQ(aggregate.TotalFaultCount(), 16);
 }
 
