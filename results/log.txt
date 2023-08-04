@@ -1,0 +1,68 @@
+Joby Demo
+Simple demonstration of C++ principles in the context of a vehicle fleet simulation.
+Version: Aug  3 2023, 22:03:23
+Command: ./bin/joby-demo --vehicles 20 --charging-stations 3 --duration-hours 3
+- The number of vehicles in the simulation is: 20
+- The number of charging stations in the simulation is: 3
+- The time duration of the simulation is: 3.000000 hr
+- The simulation results will be written to: "results.dat"
+- The seed value for random number generation will be randomized.
+Generated 5 sample vehicle models.
+Vehicle models in this simulation:
+- Alpha Company, Alpha Model: 6 vehicles
+- Bravo Company, Bravo Model: 4 vehicles
+- Charlie Company, Charlie Model: 2 vehicles
+- Delta Company, Delta Model: 4 vehicles
+- Echo Company, Echo Model: 4 vehicles
+Time steps:
+- Time step 1: increment = 37.50000 min, elapsed = 37.50000 min
+- Time step 2: increment = 5.644379e-15 min, elapsed = 37.50000 min
+- Time step 3: increment = 6.266520e-31 min, elapsed = 37.50000 min
+- Time step 4: increment = 6.957235e-47 min, elapsed = 37.50000 min
+- Time step 5: increment = 7.724082e-63 min, elapsed = 37.50000 min
+- Time step 6: increment = 8.575454e-79 min, elapsed = 37.50000 min
+- Time step 7: increment = 9.520666e-95 min, elapsed = 37.50000 min
+- Time step 8: increment = 1.057006e-110 min, elapsed = 37.50000 min
+- Time step 9: increment = 1.173513e-126 min, elapsed = 37.50000 min
+- Time step 10: increment = 1.302861e-142 min, elapsed = 37.50000 min
+- Time step 11: increment = 1.446466e-158 min, elapsed = 37.50000 min
+- Time step 12: increment = 1.605900e-174 min, elapsed = 37.50000 min
+- Time step 13: increment = 1.782907e-190 min, elapsed = 37.50000 min
+- Time step 14: increment = 1.979425e-206 min, elapsed = 37.50000 min
+- Time step 15: increment = 2.197603e-222 min, elapsed = 37.50000 min
+- Time step 16: increment = 2.439829e-238 min, elapsed = 37.50000 min
+- Time step 17: increment = 2.708754e-254 min, elapsed = 37.50000 min
+- Time step 18: increment = 3.007322e-270 min, elapsed = 37.50000 min
+- Time step 19: increment = 3.338798e-286 min, elapsed = 37.50000 min
+- Time step 20: increment = 3.706810e-302 min, elapsed = 37.50000 min
+- Time step 21: increment = 2.500000 min, elapsed = 40.00000 min
+- Time step 22: increment = 11.72414 min, elapsed = 51.72414 min
+- Time step 23: increment = 0.2758621 min, elapsed = 52.00000 min
+- Time step 24: increment = 12.00000 min, elapsed = 64.00000 min
+- Time step 25: increment = 12.00000 min, elapsed = 76.00000 min
+- Time step 26: increment = 6.000000 min, elapsed = 82.00000 min
+- Time step 27: increment = 3.500000 min, elapsed = 85.50000 min
+- Time step 28: increment = 6.500000 min, elapsed = 92.00000 min
+- Time step 29: increment = 5.500000 min, elapsed = 97.50000 min
+- Time step 30: increment = 2.500000 min, elapsed = 100.00000 min
+- Time step 31: increment = 3.449343e-15 min, elapsed = 100.00000 min
+- Time step 32: increment = 4.000000 min, elapsed = 104.0000 min
+- Time step 33: increment = 11.50000 min, elapsed = 115.5000 min
+- Time step 34: increment = 7.500000 min, elapsed = 123.0000 min
+- Time step 35: increment = 10.50000 min, elapsed = 133.5000 min
+- Time step 36: increment = 0.2241379 min, elapsed = 133.7241 min
+- Time step 37: increment = 4.460357e-17 min, elapsed = 133.7241 min
+- Time step 38: increment = 3.775862 min, elapsed = 137.5000 min
+- Time step 39: increment = 2.500000 min, elapsed = 140.0000 min
+- Time step 40: increment = 4.000000 min, elapsed = 144.0000 min
+- Time step 41: increment = 7.500000 min, elapsed = 151.5000 min
+- Time step 42: increment = 12.00000 min, elapsed = 163.5000 min
+- Time step 43: increment = 3.724138 min, elapsed = 167.2241 min
+- Time step 44: increment = 7.136571e-16 min, elapsed = 167.2241 min
+- Time step 45: increment = 2.275862 min, elapsed = 169.5000 min
+- Time step 46: increment = 6.500000 min, elapsed = 176.0000 min
+- Time step 47: increment = 4.000000 min, elapsed = 180.0000 min
+Computed the aggregate statistics.
+Wrote the results to: results.dat
+End of Joby Demo.
+
