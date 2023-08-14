@@ -57,9 +57,7 @@ public:
   constexpr const VehicleId& Id() const noexcept { return id_; }
 
   // Vehicle model of this vehicle.
-  const std::shared_ptr<const VehicleModel>& Model() const noexcept {
-    return model_;
-  }
+  std::shared_ptr<const VehicleModel> Model() const noexcept { return model_; }
 
   // Current status of this vehicle.
   constexpr const VehicleStatus Status() const noexcept { return status_; }
