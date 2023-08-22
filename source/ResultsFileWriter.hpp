@@ -185,26 +185,29 @@ private:
   // Returns the printed mean flight duration of a statistics object.
   std::string PrintMeanFlightDuration(
       const Statistics& statistics) const noexcept {
-    return statistics.MeanFlightDuration().Print(PhQ::Unit::Time::Hour);
+    return statistics.MeanFlightDuration().Print(
+        PhQ::Unit::Time::Hour, PhQ::Precision::Single);
   }
 
   // Returns the printed mean flight distance of a statistics object.
   std::string PrintMeanFlightDistance(
       const Statistics& statistics) const noexcept {
-    return statistics.MeanFlightDistance().Print(PhQ::Unit::Length::Mile);
+    return statistics.MeanFlightDistance().Print(
+        PhQ::Unit::Length::Mile, PhQ::Precision::Single);
   }
 
   // Returns the printed mean charging duration of a statistics object.
   std::string PrintMeanChargingDuration(
       const Statistics& statistics) const noexcept {
-    return statistics.MeanChargingDuration().Print(PhQ::Unit::Time::Hour);
+    return statistics.MeanChargingDuration().Print(
+        PhQ::Unit::Time::Hour, PhQ::Precision::Single);
   }
 
   // Returns the printed total flight passenger distance of a statistics object.
   std::string PrintTotalFlightPassengerDistance(
       const Statistics& statistics) const noexcept {
     return statistics.TotalFlightPassengerDistance().Print(
-        PhQ::Unit::Length::Mile);
+        PhQ::Unit::Length::Mile, PhQ::Precision::Single);
   }
 
   // Returns the printed total fault count of a statistics object.
