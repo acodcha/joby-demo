@@ -50,10 +50,14 @@ public:
   }
 
   // Returns whether the collection is empty.
-  bool Empty() const noexcept { return data_.empty(); }
+  bool Empty() const noexcept {
+    return data_.empty();
+  }
 
   // Returns the number of charging stations in the collection.
-  std::size_t Size() const noexcept { return data_.size(); }
+  std::size_t Size() const noexcept {
+    return data_.size();
+  }
 
   // Attempts to insert a new charging station into the collection. Returns true
   // if the new charging station was successfully inserted, or false otherwise.

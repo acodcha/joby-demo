@@ -81,7 +81,9 @@ public:
   }
 
   // Globally-unique identifier for this vehicle model.
-  constexpr const VehicleModelId Id() const noexcept { return id_; }
+  constexpr const VehicleModelId Id() const noexcept {
+    return id_;
+  }
 
   // Name of the manufacturer of this vehicle model in English.
   // TODO: Consider using a Name class to handle names in multiple languages.

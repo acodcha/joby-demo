@@ -47,14 +47,20 @@ public:
   ChargingStation(const ChargingStationId& id) noexcept : id_(id) {}
 
   // Globally-unique identifier of this charging station.
-  const ChargingStationId& Id() const noexcept { return id_; }
+  const ChargingStationId& Id() const noexcept {
+    return id_;
+  }
 
   // Returns whether this charging station is empty.
-  bool Empty() const noexcept { return queue_.empty(); }
+  bool Empty() const noexcept {
+    return queue_.empty();
+  }
 
   // Returns the count of vehicles at this charging station (either queued or
   // charging).
-  std::size_t Count() const noexcept { return queue_.size(); }
+  std::size_t Count() const noexcept {
+    return queue_.size();
+  }
 
   // Returns whether a given vehicle is present at this charging station (either
   // queued or charging).
