@@ -30,19 +30,19 @@ namespace Demo {
 
 namespace {
 
-const std::shared_ptr<const VehicleModel> model =
-    std::make_shared<const VehicleModel>(
-        /*id=*/111,
-        /*manufacturer_name_english=*/"Manufacturer A",
-        /*model_name_english=*/"Model A",
-        /*passenger_count=*/4,
-        /*cruise_speed=*/PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour),
-        /*battery_capacity=*/PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour),
-        /*charging_duration=*/PhQ::Time(0.6, PhQ::Unit::Time::Hour),
-        /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
-        /*transport_energy_consumption=*/
-        PhQ::TransportEnergyConsumption(
-            1.6, PhQ::Unit::Force::KilowattHourPerMile));
+const std::shared_ptr<const VehicleModel> model = std::make_shared<
+    const VehicleModel>(
+    /*id=*/111,
+    /*manufacturer_name_english=*/"Manufacturer A",
+    /*model_name_english=*/"Model A",
+    /*passenger_count=*/4,
+    /*cruise_speed=*/PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour),
+    /*battery_capacity=*/PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour),
+    /*charging_duration=*/PhQ::Time(0.6, PhQ::Unit::Time::Hour),
+    /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
+    /*transport_energy_consumption=*/
+    PhQ::TransportEnergyConsumption(
+        1.6, PhQ::Unit::Force::KilowattHourPerMile));
 
 const std::shared_ptr<Vehicle> vehicle222 =
     std::make_shared<Vehicle>(222, model);

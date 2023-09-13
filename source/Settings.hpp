@@ -54,7 +54,9 @@ public:
   }
 
   // Number of vehicles in the simulation.
-  constexpr int32_t Vehicles() const noexcept { return vehicles_; }
+  constexpr int32_t Vehicles() const noexcept {
+    return vehicles_;
+  }
 
   // Number of charging stations in the simulation.
   constexpr int32_t ChargingStations() const noexcept {
@@ -62,9 +64,13 @@ public:
   }
 
   // Time duration of the simulation.
-  constexpr const PhQ::Time& Duration() const noexcept { return duration_; }
+  constexpr const PhQ::Time& Duration() const noexcept {
+    return duration_;
+  }
 
-  const std::filesystem::path& Results() const noexcept { return results_; }
+  const std::filesystem::path& Results() const noexcept {
+    return results_;
+  }
 
   // Random seed used to generate pseudo-random numbers in the simulation, or
   // std::nullopt, in which case random numbers generated in the simulation are

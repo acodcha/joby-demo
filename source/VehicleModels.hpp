@@ -41,10 +41,14 @@ public:
   VehicleModels() noexcept = default;
 
   // Returns whether the collection is empty.
-  bool Empty() const noexcept { return vehicle_models_.empty(); }
+  bool Empty() const noexcept {
+    return vehicle_models_.empty();
+  }
 
   // Returns the number of vehicle models in the collection.
-  std::size_t Size() const noexcept { return vehicle_models_.size(); }
+  std::size_t Size() const noexcept {
+    return vehicle_models_.size();
+  }
 
   // Attempts to insert a new vehicle model into the collection. Returns true if
   // the new vehicle model was successfully inserted, or false otherwise.

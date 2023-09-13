@@ -33,7 +33,9 @@ namespace Demo {
 class FileWriter : public File<std::ofstream> {
 public:
   // Destructor. Sets the permissions for this file before closing it.
-  ~FileWriter() noexcept { SetPermissions(); }
+  ~FileWriter() noexcept {
+    SetPermissions();
+  }
 
   // Permissions of this file.
   const std::filesystem::perms& Permissions() const noexcept {

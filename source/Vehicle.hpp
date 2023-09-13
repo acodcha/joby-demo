@@ -54,13 +54,19 @@ public:
   }
 
   // Globally-unique identifier for this vehicle.
-  constexpr const VehicleId& Id() const noexcept { return id_; }
+  constexpr const VehicleId& Id() const noexcept {
+    return id_;
+  }
 
   // Vehicle model of this vehicle.
-  std::shared_ptr<const VehicleModel> Model() const noexcept { return model_; }
+  std::shared_ptr<const VehicleModel> Model() const noexcept {
+    return model_;
+  }
 
   // Current status of this vehicle.
-  constexpr const VehicleStatus Status() const noexcept { return status_; }
+  constexpr const VehicleStatus Status() const noexcept {
+    return status_;
+  }
 
   // Returns the charging station ID at which this vehicle is currently either
   // queued or charging, or std::nullopt if this vehicle is not currently at a
@@ -71,7 +77,9 @@ public:
   }
 
   // Current remaining energy in the battery of this vehicle.
-  constexpr const PhQ::Energy& Battery() const noexcept { return battery_; }
+  constexpr const PhQ::Energy& Battery() const noexcept {
+    return battery_;
+  }
 
   // Statistics of this vehicle.
   constexpr const Demo::Statistics& Statistics() const noexcept {
@@ -224,7 +232,9 @@ private:
   }
 
   // This vehicle lands.
-  void Land() noexcept { status_ = VehicleStatus::OnStandby; }
+  void Land() noexcept {
+    status_ = VehicleStatus::OnStandby;
+  }
 
   // This vehicle enqueues at a charging station if it is not already.
   void EnqueueAtChargingStationIfNotAlready(

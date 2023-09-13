@@ -52,7 +52,9 @@ protected:
   }
 
   // Prints a blank line in this file.
-  void BlankLine() noexcept { Line(""); }
+  void BlankLine() noexcept {
+    Line("");
+  }
 };
 
 }  // namespace Demo

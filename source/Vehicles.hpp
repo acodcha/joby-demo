@@ -72,10 +72,14 @@ public:
   }
 
   // Returns whether the collection is empty.
-  bool Empty() const noexcept { return vehicles_.empty(); }
+  bool Empty() const noexcept {
+    return vehicles_.empty();
+  }
 
   // Returns the number of vehicles in the collection.
-  std::size_t Size() const noexcept { return vehicles_.size(); }
+  std::size_t Size() const noexcept {
+    return vehicles_.size();
+  }
 
   // Attempts to insert a new vehicle into the collection. Returns true if the
   // new vehicle was successfully inserted, or false otherwise.
@@ -132,9 +136,13 @@ public:
       : std::vector<std::shared_ptr<Vehicle>>::iterator(i) {}
   };
 
-  iterator begin() noexcept { return iterator(vehicles_.begin()); }
+  iterator begin() noexcept {
+    return iterator(vehicles_.begin());
+  }
 
-  iterator end() noexcept { return iterator(vehicles_.end()); }
+  iterator end() noexcept {
+    return iterator(vehicles_.end());
+  }
 
   struct const_iterator
     : public std::vector<std::shared_ptr<Vehicle>>::const_iterator {

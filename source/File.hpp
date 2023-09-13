@@ -32,7 +32,8 @@
 namespace Demo {
 
 // General-purpose file handler.
-template<class FileStream> class File {
+template <class FileStream>
+class File {
 public:
   // Destructor. Closes the file if needed.
   ~File() noexcept {
@@ -42,7 +43,9 @@ public:
   }
 
   // Path to this file.
-  const std::filesystem::path& Path() const noexcept { return path_; }
+  const std::filesystem::path& Path() const noexcept {
+    return path_;
+  }
 
 protected:
   std::filesystem::path path_;
