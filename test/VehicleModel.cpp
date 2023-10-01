@@ -60,7 +60,7 @@ TEST(VehicleModel, MainConstructor) {
       /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          1.6, PhQ::Unit::Force::KilowattHourPerMile)};
+          1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)};
 
   EXPECT_EQ(vehicle_model.Id(), 111);
 
@@ -82,29 +82,33 @@ TEST(VehicleModel, MainConstructor) {
   EXPECT_EQ(vehicle_model.MeanFaultRate(),
             PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour));
 
-  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
-            PhQ::TransportEnergyConsumption(
-                1.6, PhQ::Unit::Force::KilowattHourPerMile));
+  EXPECT_EQ(
+      vehicle_model.TransportEnergyConsumption(),
+      PhQ::TransportEnergyConsumption(
+          1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
-  EXPECT_EQ(vehicle_model.TransportPowerUsage(),
-            PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour)
-                * PhQ::TransportEnergyConsumption(
-                    1.6, PhQ::Unit::Force::KilowattHourPerMile));
+  EXPECT_EQ(
+      vehicle_model.TransportPowerUsage(),
+      PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour)
+          * PhQ::TransportEnergyConsumption(
+              1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
   EXPECT_EQ(vehicle_model.ChargingRate(),
             PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
                 / PhQ::Time(0.6, PhQ::Unit::Time::Hour));
 
-  EXPECT_EQ(vehicle_model.RangeLimit(),
-            PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
-                / PhQ::TransportEnergyConsumption(
-                    1.6, PhQ::Unit::Force::KilowattHourPerMile));
+  EXPECT_EQ(
+      vehicle_model.RangeLimit(),
+      PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
+          / PhQ::TransportEnergyConsumption(
+              1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
-  EXPECT_EQ(vehicle_model.EnduranceLimit(),
-            (PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
-             / PhQ::TransportEnergyConsumption(
-                 1.6, PhQ::Unit::Force::KilowattHourPerMile))
-                / PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
+  EXPECT_EQ(
+      vehicle_model.EnduranceLimit(),
+      (PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
+       / PhQ::TransportEnergyConsumption(
+           1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile))
+          / PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
 }
 
 TEST(VehicleModel, NegativeValues) {
@@ -119,7 +123,7 @@ TEST(VehicleModel, NegativeValues) {
       /*fault_rate=*/PhQ::Frequency(-0.25, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          -1.6, PhQ::Unit::Force::KilowattHourPerMile)};
+          -1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)};
 
   EXPECT_EQ(vehicle_model.Id(), 111);
   EXPECT_EQ(vehicle_model.ManufacturerNameEnglish(), "Manufacturer A");

@@ -59,7 +59,7 @@ TEST(Vehicle, MainConstructor) {
       /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          1.5, PhQ::Unit::Force::KilowattHourPerMile));
+          1.5, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
   const Vehicle vehicle = {id, vehicle_model};
 
@@ -90,7 +90,8 @@ TEST(Vehicle, TimeStep) {
           /*charging_duration=*/PhQ::Time(1.0, PhQ::Unit::Time::Second),
           /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
           /*transport_energy_consumption=*/
-          PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton));
+          PhQ::TransportEnergyConsumption(
+              1.0, PhQ::Unit::TransportEnergyConsumption::JoulePerMetre));
 
   Vehicle vehicle = {id, vehicle_model};
 
