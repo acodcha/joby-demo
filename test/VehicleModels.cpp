@@ -42,7 +42,7 @@ const std::shared_ptr<const VehicleModel> model111 = std::make_shared<
     /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
     /*transport_energy_consumption=*/
     PhQ::TransportEnergyConsumption(
-        1.6, PhQ::Unit::Force::KilowattHourPerMile));
+        1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
 const std::shared_ptr<const VehicleModel> model222 = std::make_shared<
     const VehicleModel>(
@@ -56,7 +56,7 @@ const std::shared_ptr<const VehicleModel> model222 = std::make_shared<
     /*fault_rate=*/PhQ::Frequency(0.11, PhQ::Unit::Frequency::PerHour),
     /*transport_energy_consumption=*/
     PhQ::TransportEnergyConsumption(
-        2.2, PhQ::Unit::Force::KilowattHourPerMile));
+        2.2, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
 TEST(VehicleModels, Empty) {
   const VehicleModels empty_models;

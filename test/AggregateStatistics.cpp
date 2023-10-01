@@ -42,7 +42,7 @@ const std::shared_ptr<const VehicleModel> vehicle_model = std::make_shared<
     /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
     /*transport_energy_consumption=*/
     PhQ::TransportEnergyConsumption(
-        1.6, PhQ::Unit::Force::KilowattHourPerMile));
+        1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
 TEST(AggregateStatistics, Empty) {
   const AggregateStatistics aggregate_statistics_0;

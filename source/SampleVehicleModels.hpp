@@ -45,7 +45,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       /*fault_rate=*/PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          1.6, PhQ::Unit::Force::KilowattHourPerMile)));
+          1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/1,
@@ -58,7 +58,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       /*fault_rate=*/PhQ::Frequency(0.1, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          1.5, PhQ::Unit::Force::KilowattHourPerMile)));
+          1.5, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/2,
@@ -71,7 +71,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       /*fault_rate=*/PhQ::Frequency(0.05, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          2.2, PhQ::Unit::Force::KilowattHourPerMile)));
+          2.2, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/3,
@@ -84,7 +84,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       /*fault_rate=*/PhQ::Frequency(0.22, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          0.8, PhQ::Unit::Force::KilowattHourPerMile)));
+          0.8, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/4,
@@ -97,7 +97,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       /*fault_rate=*/PhQ::Frequency(0.61, PhQ::Unit::Frequency::PerHour),
       /*transport_energy_consumption=*/
       PhQ::TransportEnergyConsumption(
-          5.8, PhQ::Unit::Force::KilowattHourPerMile)));
+          5.8, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
   std::cout << "Generated " << vehicle_models.Size()
             << " sample vehicle models." << std::endl;

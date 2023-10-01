@@ -44,7 +44,8 @@ TEST(Simulation, Regular) {
           /*charging_duration=*/PhQ::Time(1.0, PhQ::Unit::Time::Second),
           /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
           /*transport_energy_consumption=*/
-          PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::Force::Newton));
+          PhQ::TransportEnergyConsumption(
+              1.0, PhQ::Unit::TransportEnergyConsumption::JoulePerMetre));
 
   Vehicles vehicles;
   vehicles.Insert(std::make_shared<Vehicle>(/*id=*/222, vehicle_model));

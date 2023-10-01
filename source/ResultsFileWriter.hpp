@@ -61,7 +61,9 @@ public:
           *vehicle_model, vehicle_model_id_and_statistics.second);
     }
 
-    std::cout << "Wrote the results to: " << path_.string() << std::endl;
+    if (!path_.empty()) {
+      std::cout << "Wrote the results to: " << path_.string() << std::endl;
+    }
   }
 
 private:
