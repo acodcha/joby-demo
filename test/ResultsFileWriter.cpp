@@ -1,26 +1,24 @@
-// Copyright 2023 Alexandre Coderre-Chabot
+// Copyright © 2023-2024 Alexandre Coderre-Chabot
 //
-// This file is licensed under the MIT license. For more information, visit:
-//     https://mit-license.org
+// This file is part of Joby Demonstration, a simple demonstration of C++ principles in the context
+// of a vehicle fleet simulation.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//   - The above copyright notice and this permission notice shall be included
-//     in all copies or substantial portions of the Software.
-//   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-//     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-//     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-//     NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-//     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-//     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-//     USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// This file was originally obtained from:
+// Joby Demonstration is hosted at:
 //     https://github.com/acodcha/joby-demo
+//
+// This file is licensed under the MIT license (https://mit-license.org). Permission is hereby
+// granted, free of charge, to any person obtaining a copy of this software and associated
+// documentation files (the "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do
+// so, subject to the following conditions:
+//   - The above copyright notice and this permission notice shall be included in all copies or
+//     substantial portions of the Software.
+//   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//     BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "../source/ResultsFileWriter.hpp"
 
@@ -36,10 +34,9 @@ TEST(ResultsFileWriter, Empty) {
   EXPECT_EQ(results_file_writer.Path(), std::filesystem::path());
 
   EXPECT_EQ(results_file_writer.Permissions(),
-            std::filesystem::perms{std::filesystem::perms::owner_read
-                                   | std::filesystem::perms::owner_write
-                                   | std::filesystem::perms::group_read
-                                   | std::filesystem::perms::others_read});
+            std::filesystem::perms{
+                std::filesystem::perms::owner_read | std::filesystem::perms::owner_write
+                | std::filesystem::perms::group_read | std::filesystem::perms::others_read});
 
   std::ifstream file;
   file.open("");
@@ -61,8 +58,7 @@ TEST(ResultsFileWriter, Simple) {
       /*charging_duration=*/PhQ::Time(1.0, PhQ::Unit::Time::Second),
       /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
       /*transport_energy_consumption=*/
-      PhQ::TransportEnergyConsumption(
-          1.0, PhQ::Unit::TransportEnergyConsumption::JoulePerMetre)));
+      PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::TransportEnergyConsumption::JoulePerMetre)));
 
   vehicle_models.Insert(std::make_shared<const VehicleModel>(
       /*id=*/222,
@@ -74,8 +70,7 @@ TEST(ResultsFileWriter, Simple) {
       /*charging_duration=*/PhQ::Time(1.0, PhQ::Unit::Time::Second),
       /*fault_rate=*/PhQ::Frequency(1.0, PhQ::Unit::Frequency::Hertz),
       /*transport_energy_consumption=*/
-      PhQ::TransportEnergyConsumption(
-          1.0, PhQ::Unit::TransportEnergyConsumption::JoulePerMetre)));
+      PhQ::TransportEnergyConsumption(1.0, PhQ::Unit::TransportEnergyConsumption::JoulePerMetre)));
 
   Vehicles vehicles;
   vehicles.Insert(std::make_shared<Vehicle>(333, vehicle_models.At(111)));
@@ -83,15 +78,13 @@ TEST(ResultsFileWriter, Simple) {
 
   const AggregateStatistics aggregate_statistics{vehicles};
 
-  ResultsFileWriter results_file_writer{
-      path, vehicle_models, aggregate_statistics};
+  ResultsFileWriter results_file_writer{path, vehicle_models, aggregate_statistics};
 
   EXPECT_EQ(results_file_writer.Path(), path);
   EXPECT_EQ(results_file_writer.Permissions(),
-            std::filesystem::perms{std::filesystem::perms::owner_read
-                                   | std::filesystem::perms::owner_write
-                                   | std::filesystem::perms::group_read
-                                   | std::filesystem::perms::others_read});
+            std::filesystem::perms{
+                std::filesystem::perms::owner_read | std::filesystem::perms::owner_write
+                | std::filesystem::perms::group_read | std::filesystem::perms::others_read});
 
   std::ifstream file;
   file.open(path);
