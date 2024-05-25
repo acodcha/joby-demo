@@ -1,26 +1,24 @@
-// Copyright 2023 Alexandre Coderre-Chabot
+// Copyright © 2023-2024 Alexandre Coderre-Chabot
 //
-// This file is licensed under the MIT license. For more information, visit:
-//     https://mit-license.org
+// This file is part of Joby Demonstration, a simple demonstration of C++ principles in the context
+// of a vehicle fleet simulation.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//   - The above copyright notice and this permission notice shall be included
-//     in all copies or substantial portions of the Software.
-//   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-//     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-//     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-//     NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-//     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-//     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-//     USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// This file was originally obtained from:
+// Joby Demonstration is hosted at:
 //     https://github.com/acodcha/joby-demo
+//
+// This file is licensed under the MIT license (https://mit-license.org). Permission is hereby
+// granted, free of charge, to any person obtaining a copy of this software and associated
+// documentation files (the "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do
+// so, subject to the following conditions:
+//   - The above copyright notice and this permission notice shall be included in all copies or
+//     substantial portions of the Software.
+//   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//     BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "../source/VehicleModel.hpp"
 
@@ -36,16 +34,15 @@ TEST(VehicleModel, DefaultConstructor) {
   EXPECT_EQ(vehicle_model.ManufacturerNameEnglish(), "");
   EXPECT_EQ(vehicle_model.ModelNameEnglish(), "");
   EXPECT_EQ(vehicle_model.PassengerCount(), 0);
-  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed::Zero());
-  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy::Zero());
-  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency::Zero());
-  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
-            PhQ::TransportEnergyConsumption::Zero());
-  EXPECT_EQ(vehicle_model.TransportPowerUsage(), PhQ::Power::Zero());
-  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Power::Zero());
-  EXPECT_EQ(vehicle_model.RangeLimit(), PhQ::Length::Zero());
-  EXPECT_EQ(vehicle_model.EnduranceLimit(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed<>::Zero());
+  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy<>::Zero());
+  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time<>::Zero());
+  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency<>::Zero());
+  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(), PhQ::TransportEnergyConsumption<>::Zero());
+  EXPECT_EQ(vehicle_model.TransportPowerUsage(), PhQ::Power<>::Zero());
+  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Power<>::Zero());
+  EXPECT_EQ(vehicle_model.RangeLimit(), PhQ::Length<>::Zero());
+  EXPECT_EQ(vehicle_model.EnduranceLimit(), PhQ::Time<>::Zero());
 }
 
 TEST(VehicleModel, MainConstructor) {
@@ -70,45 +67,36 @@ TEST(VehicleModel, MainConstructor) {
 
   EXPECT_EQ(vehicle_model.PassengerCount(), 4);
 
-  EXPECT_EQ(vehicle_model.CruiseSpeed(),
-            PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
+  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
 
-  EXPECT_EQ(vehicle_model.BatteryCapacity(),
-            PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour));
+  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour));
 
-  EXPECT_EQ(
-      vehicle_model.ChargingDuration(), PhQ::Time(0.6, PhQ::Unit::Time::Hour));
+  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time(0.6, PhQ::Unit::Time::Hour));
 
-  EXPECT_EQ(vehicle_model.MeanFaultRate(),
-            PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour));
+  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency(0.25, PhQ::Unit::Frequency::PerHour));
 
-  EXPECT_EQ(
-      vehicle_model.TransportEnergyConsumption(),
-      PhQ::TransportEnergyConsumption(
-          1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
+  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
+            PhQ::TransportEnergyConsumption(
+                1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
-  EXPECT_EQ(
-      vehicle_model.TransportPowerUsage(),
-      PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour)
-          * PhQ::TransportEnergyConsumption(
-              1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
+  EXPECT_EQ(vehicle_model.TransportPowerUsage(),
+            PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour)
+                * PhQ::TransportEnergyConsumption(
+                    1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
-  EXPECT_EQ(vehicle_model.ChargingRate(),
+  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
+                                              / PhQ::Time(0.6, PhQ::Unit::Time::Hour));
+
+  EXPECT_EQ(vehicle_model.RangeLimit(),
             PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
-                / PhQ::Time(0.6, PhQ::Unit::Time::Hour));
+                / PhQ::TransportEnergyConsumption(
+                    1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
 
-  EXPECT_EQ(
-      vehicle_model.RangeLimit(),
-      PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
-          / PhQ::TransportEnergyConsumption(
-              1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile));
-
-  EXPECT_EQ(
-      vehicle_model.EnduranceLimit(),
-      (PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
-       / PhQ::TransportEnergyConsumption(
-           1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile))
-          / PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
+  EXPECT_EQ(vehicle_model.EnduranceLimit(),
+            (PhQ::Energy(320.0, PhQ::Unit::Energy::KilowattHour)
+             / PhQ::TransportEnergyConsumption(
+                 1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile))
+                / PhQ::Speed(120.0, PhQ::Unit::Speed::MilePerHour));
 }
 
 TEST(VehicleModel, NegativeValues) {
@@ -129,16 +117,15 @@ TEST(VehicleModel, NegativeValues) {
   EXPECT_EQ(vehicle_model.ManufacturerNameEnglish(), "Manufacturer A");
   EXPECT_EQ(vehicle_model.ModelNameEnglish(), "Model A");
   EXPECT_EQ(vehicle_model.PassengerCount(), 0);
-  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed::Zero());
-  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy::Zero());
-  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time::Zero());
-  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency::Zero());
-  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(),
-            PhQ::TransportEnergyConsumption::Zero());
-  EXPECT_EQ(vehicle_model.TransportPowerUsage(), PhQ::Power::Zero());
-  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Power::Zero());
-  EXPECT_EQ(vehicle_model.RangeLimit(), PhQ::Length::Zero());
-  EXPECT_EQ(vehicle_model.EnduranceLimit(), PhQ::Time::Zero());
+  EXPECT_EQ(vehicle_model.CruiseSpeed(), PhQ::Speed<>::Zero());
+  EXPECT_EQ(vehicle_model.BatteryCapacity(), PhQ::Energy<>::Zero());
+  EXPECT_EQ(vehicle_model.ChargingDuration(), PhQ::Time<>::Zero());
+  EXPECT_EQ(vehicle_model.MeanFaultRate(), PhQ::Frequency<>::Zero());
+  EXPECT_EQ(vehicle_model.TransportEnergyConsumption(), PhQ::TransportEnergyConsumption<>::Zero());
+  EXPECT_EQ(vehicle_model.TransportPowerUsage(), PhQ::Power<>::Zero());
+  EXPECT_EQ(vehicle_model.ChargingRate(), PhQ::Power<>::Zero());
+  EXPECT_EQ(vehicle_model.RangeLimit(), PhQ::Length<>::Zero());
+  EXPECT_EQ(vehicle_model.EnduranceLimit(), PhQ::Time<>::Zero());
 }
 
 }  // namespace

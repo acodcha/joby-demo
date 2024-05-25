@@ -1,26 +1,24 @@
-// Copyright 2023 Alexandre Coderre-Chabot
+// Copyright © 2023-2024 Alexandre Coderre-Chabot
 //
-// This file is licensed under the MIT license. For more information, visit:
-//     https://mit-license.org
+// This file is part of Joby Demonstration, a simple demonstration of C++ principles in the context
+// of a vehicle fleet simulation.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//   - The above copyright notice and this permission notice shall be included
-//     in all copies or substantial portions of the Software.
-//   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-//     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-//     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-//     NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-//     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-//     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-//     USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// This file was originally obtained from:
+// Joby Demonstration is hosted at:
 //     https://github.com/acodcha/joby-demo
+//
+// This file is licensed under the MIT license (https://mit-license.org). Permission is hereby
+// granted, free of charge, to any person obtaining a copy of this software and associated
+// documentation files (the "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do
+// so, subject to the following conditions:
+//   - The above copyright notice and this permission notice shall be included in all copies or
+//     substantial portions of the Software.
+//   - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+//     BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+//     DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifndef DEMO_INCLUDE_SAMPLE_VEHICLE_MODELS_HPP
 #define DEMO_INCLUDE_SAMPLE_VEHICLE_MODELS_HPP
@@ -34,7 +32,7 @@ namespace Demo {
 VehicleModels GenerateSampleVehicleModels() noexcept {
   VehicleModels vehicle_models;
 
-  vehicle_models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<VehicleModel>(
       /*id=*/0,
       /*manufacturer_name_english=*/"Alpha Company",
       /*model_name_english=*/"Alpha Model",
@@ -47,7 +45,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           1.6, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
-  vehicle_models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<VehicleModel>(
       /*id=*/1,
       /*manufacturer_name_english=*/"Bravo Company",
       /*model_name_english=*/"Bravo Model",
@@ -60,7 +58,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           1.5, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
-  vehicle_models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<VehicleModel>(
       /*id=*/2,
       /*manufacturer_name_english=*/"Charlie Company",
       /*model_name_english=*/"Charlie Model",
@@ -73,7 +71,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           2.2, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
-  vehicle_models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<VehicleModel>(
       /*id=*/3,
       /*manufacturer_name_english=*/"Delta Company",
       /*model_name_english=*/"Delta Model",
@@ -86,7 +84,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           0.8, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
-  vehicle_models.Insert(std::make_shared<const VehicleModel>(
+  vehicle_models.Insert(std::make_shared<VehicleModel>(
       /*id=*/4,
       /*manufacturer_name_english=*/"Echo Company",
       /*model_name_english=*/"Echo Model",
@@ -99,8 +97,7 @@ VehicleModels GenerateSampleVehicleModels() noexcept {
       PhQ::TransportEnergyConsumption(
           5.8, PhQ::Unit::TransportEnergyConsumption::KilowattHourPerMile)));
 
-  std::cout << "Generated " << vehicle_models.Size()
-            << " sample vehicle models." << std::endl;
+  std::cout << "Generated " << vehicle_models.Size() << " sample vehicle models." << std::endl;
 
   return vehicle_models;
 }
